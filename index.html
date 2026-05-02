@@ -1,38 +1,48 @@
 <!DOCTYPE html>
-<html lang="fr" data-theme="cyber">
+<html lang="fr" data-theme="redblack">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>VOANH AI — Votre Intelligence Artificielle Personnelle</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src https://api.mistral.ai; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src https://cdn.jsdelivr.net; img-src 'self' data:; script-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Libre AI — Votre Intelligence Artificielle Personnelle</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/orbitron@5/400.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/orbitron@5/600.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/orbitron@5/700.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/orbitron@5/900.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/share-tech-mono@5/400.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/exo-2@5/300.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/exo-2@5/400.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/exo-2@5/500.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/exo-2@5/600.css" rel="stylesheet">
 <style>
   /* ═══════════════════════════════════════════
-   VOANH DESIGN SYSTEM — CYBER / 2ADVANCED
+   LIBRE AI DESIGN SYSTEM
    ═══════════════════════════════════════════ */
 :root {
-  --void: #020509;
-  --deep: #050d18;
-  --hull: #091525;
-  --plate: #0d1e33;
-  --grid: #122540;
-  --wire: #1a3455;
-  --cyan: #00e5ff;
-  --cyan-dim: rgba(0, 229, 255, 0.15);
-  --cyan-glow: rgba(0, 229, 255, 0.35);
-  --neon: #00ff9d;
-  --neon-dim: rgba(0, 255, 157, 0.12);
-  --plasma: #ff6b35;
-  --plasma-dim: rgba(255, 107, 53, 0.15);
-  --violet: #7c3aed;
-  --violet-dim: rgba(124, 58, 237, 0.2);
-  --gold: #f59e0b;
-  --text: #b8d4f0;
-  --text-bright: #e8f4ff;
-  --text-dim: #4a6b8a;
-  --text-code: #00e5ff;
-  --danger: #ff3366;
-  --success: #00ff9d;
+  --void: #050101;
+  --deep: #0b0304;
+  --hull: #130507;
+  --plate: #1d080b;
+  --grid: #2a0c11;
+  --wire: #53121a;
+  --cyan: #ff1744;
+  --cyan-dim: rgba(255, 23, 68, 0.15);
+  --cyan-glow: rgba(255, 23, 68, 0.38);
+  --neon: #ff3b30;
+  --neon-dim: rgba(255, 59, 48, 0.12);
+  --plasma: #ff8a3d;
+  --plasma-dim: rgba(255, 138, 61, 0.15);
+  --violet: #b00020;
+  --violet-dim: rgba(176, 0, 32, 0.2);
+  --gold: #ffcc66;
+  --text: #f0b8bf;
+  --text-bright: #fff4f5;
+  --text-dim: #9a4d57;
+  --text-code: #ff8a95;
+  --danger: #ff1744;
+  --success: #ff3b30;
   --warning: #f59e0b;
   --font-display: 'Orbitron', monospace;
   --font-mono: 'Share Tech Mono', monospace;
@@ -40,10 +50,10 @@
   --r: 6px;
   --r-lg: 12px;
   --border: 1px solid var(--wire);
-  --border-cyan: 1px solid rgba(0,229,255,0.3);
+  --border-cyan: 1px solid rgba(255,23,68,0.3);
   --transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
-  --scanline: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,229,255,0.015) 2px, rgba(0,229,255,0.015) 4px);
-  --hud-border: 1px solid rgba(0,229,255,0.2);
+  --scanline: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,23,68,0.018) 2px, rgba(255,23,68,0.018) 4px);
+  --hud-border: 1px solid rgba(255,23,68,0.24);
 }
 
 /* RESET */
@@ -68,8 +78,8 @@ body {
   flex-direction: column;
   background-image:
     var(--scanline),
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0,229,255,0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 60% at 90% 80%, rgba(124,58,237,0.04) 0%, transparent 50%);
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255,23,68,0.11) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 60% at 90% 80%, rgba(176,0,32,0.08) 0%, transparent 50%);
 }
 
 /* ═══ GRID BACKGROUND ═══ */
@@ -78,15 +88,15 @@ body::before {
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    linear-gradient(rgba(255,23,68,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,23,68,0.035) 1px, transparent 1px);
   background-size: 40px 40px;
   pointer-events: none;
   z-index: 0;
 }
 
 /* ═══ HEADER ═══ */
-#voanh-header {
+#libre-header {
   position: sticky;
   top: 0;
   z-index: 100;
@@ -99,7 +109,7 @@ body::before {
   align-items: center;
   gap: 16px;
   flex-shrink: 0;
-  box-shadow: 0 1px 0 rgba(0,229,255,0.1), 0 4px 30px rgba(0,0,0,0.5);
+  box-shadow: 0 1px 0 rgba(255,23,68,0.16), 0 4px 30px rgba(0,0,0,0.65);
 }
 
 .brand {
@@ -120,7 +130,7 @@ body::before {
 .brand-logo svg {
   width: 36px;
   height: 36px;
-  filter: drop-shadow(0 0 6px rgba(0,229,255,0.8));
+  filter: drop-shadow(0 0 6px rgba(255,23,68,0.85));
 }
 .brand-name {
   font-family: var(--font-display);
@@ -128,7 +138,7 @@ body::before {
   font-weight: 900;
   letter-spacing: 6px;
   color: var(--text-bright);
-  text-shadow: 0 0 20px rgba(0,229,255,0.5);
+  text-shadow: 0 0 20px rgba(255,23,68,0.62);
 }
 .brand-sub {
   font-family: var(--font-mono);
@@ -174,7 +184,7 @@ body::before {
 }
 .hud-select:hover, .hud-select:focus {
   border-color: var(--cyan);
-  box-shadow: 0 0 10px var(--cyan-dim), inset 0 0 10px rgba(0,229,255,0.03);
+  box-shadow: 0 0 10px var(--cyan-dim), inset 0 0 10px rgba(255,23,68,0.03);
   color: var(--text-bright);
 }
 #model-select { max-width: 180px; }
@@ -199,19 +209,19 @@ body::before {
 }
 .hud-btn:hover {
   background: var(--plate);
-  border-color: rgba(0,229,255,0.5);
+  border-color: rgba(255,23,68,0.5);
   color: var(--cyan);
   box-shadow: 0 0 10px var(--cyan-dim);
 }
 .hud-btn.primary {
-  background: linear-gradient(135deg, rgba(0,229,255,0.15), rgba(0,255,157,0.08));
-  border-color: rgba(0,229,255,0.5);
+  background: linear-gradient(135deg, rgba(255,23,68,0.15), rgba(255,59,48,0.08));
+  border-color: rgba(255,23,68,0.5);
   color: var(--cyan);
   font-weight: 600;
 }
 .hud-btn.primary:hover {
-  background: linear-gradient(135deg, rgba(0,229,255,0.25), rgba(0,255,157,0.15));
-  box-shadow: 0 0 15px var(--cyan-glow), inset 0 0 10px rgba(0,229,255,0.05);
+  background: linear-gradient(135deg, rgba(255,23,68,0.25), rgba(255,59,48,0.15));
+  box-shadow: 0 0 15px var(--cyan-glow), inset 0 0 10px rgba(255,23,68,0.05);
 }
 .hud-btn.danger { border-color: rgba(255,51,102,0.4); color: var(--danger); }
 .hud-btn.danger:hover { box-shadow: 0 0 10px rgba(255,51,102,0.3); }
@@ -232,7 +242,7 @@ body::before {
   flex-shrink: 0;
 }
 .status-pill.active {
-  border-color: rgba(0,255,157,0.4);
+  border-color: rgba(255,59,48,0.4);
   color: var(--neon);
   background: var(--neon-dim);
 }
@@ -279,18 +289,18 @@ body::before {
 
 .message.user {
   align-self: flex-end;
-  background: linear-gradient(135deg, rgba(0,229,255,0.12), rgba(0,255,157,0.06));
+  background: linear-gradient(135deg, rgba(255,23,68,0.12), rgba(255,59,48,0.06));
   border: var(--border-cyan);
   border-bottom-right-radius: 3px;
   color: var(--text-bright);
-  box-shadow: 0 4px 20px rgba(0,229,255,0.1);
+  box-shadow: 0 4px 20px rgba(255,23,68,0.1);
 }
 .message.user::before {
   content: '';
   position: absolute;
   top: 0; right: 0; bottom: 0; left: 0;
   border-radius: inherit;
-  background: linear-gradient(135deg, transparent 60%, rgba(0,229,255,0.05));
+  background: linear-gradient(135deg, transparent 60%, rgba(255,23,68,0.05));
   pointer-events: none;
 }
 
@@ -299,7 +309,7 @@ body::before {
   background: var(--hull);
   border: var(--border);
   border-bottom-left-radius: 3px;
-  border-left: 2px solid rgba(0,229,255,0.3);
+  border-left: 2px solid rgba(255,23,68,0.3);
 }
 
 .message.system {
@@ -323,7 +333,7 @@ body::before {
   color: var(--text-dim);
   margin-bottom: 6px;
 }
-.message.user .msg-label { color: rgba(0,229,255,0.5); }
+.message.user .msg-label { color: rgba(255,23,68,0.5); }
 
 .message-content {
   white-space: pre-wrap;
@@ -344,8 +354,8 @@ body::before {
 }
 .mem-tag {
   font-size: 9px;
-  background: rgba(124,58,237,0.2);
-  border: 1px solid rgba(124,58,237,0.4);
+  background: rgba(176,0,32,0.2);
+  border: 1px solid rgba(176,0,32,0.4);
   color: #a78bfa;
   padding: 2px 6px;
   border-radius: 3px;
@@ -357,7 +367,7 @@ body::before {
   align-self: flex-start;
   background: var(--hull);
   border: var(--border);
-  border-left: 2px solid rgba(0,229,255,0.3);
+  border-left: 2px solid rgba(255,23,68,0.3);
   padding: 14px 18px;
   border-radius: var(--r-lg);
   border-bottom-left-radius: 3px;
@@ -390,7 +400,7 @@ body::before {
   align-items: flex-end;
   flex-shrink: 0;
   backdrop-filter: blur(20px);
-  box-shadow: 0 -1px 0 rgba(0,229,255,0.08);
+  box-shadow: 0 -1px 0 rgba(255,23,68,0.08);
 }
 #user-input {
   flex: 1;
@@ -410,11 +420,11 @@ body::before {
 }
 #user-input::placeholder { color: var(--text-dim); }
 #user-input:focus {
-  border-color: rgba(0,229,255,0.5);
-  box-shadow: 0 0 15px var(--cyan-dim), inset 0 0 15px rgba(0,229,255,0.02);
+  border-color: rgba(255,23,68,0.5);
+  box-shadow: 0 0 15px var(--cyan-dim), inset 0 0 15px rgba(255,23,68,0.02);
 }
 #send-btn {
-  background: linear-gradient(135deg, rgba(0,229,255,0.2), rgba(0,255,157,0.1));
+  background: linear-gradient(135deg, rgba(255,23,68,0.2), rgba(255,59,48,0.1));
   border: var(--border-cyan);
   color: var(--cyan);
   font-family: var(--font-display);
@@ -430,7 +440,7 @@ body::before {
   align-self: flex-end;
 }
 #send-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, rgba(0,229,255,0.3), rgba(0,255,157,0.2));
+  background: linear-gradient(135deg, rgba(255,23,68,0.3), rgba(255,59,48,0.2));
   box-shadow: 0 0 20px var(--cyan-glow);
   transform: translateY(-1px);
 }
@@ -535,7 +545,7 @@ body::before {
 }
 .memory-input input:focus { border-color: var(--cyan); }
 .memory-input button {
-  background: rgba(0,229,255,0.1);
+  background: rgba(255,23,68,0.1);
   border: var(--border-cyan);
   color: var(--cyan);
   font-family: var(--font-mono);
@@ -545,7 +555,7 @@ body::before {
   cursor: pointer;
   transition: var(--transition);
 }
-.memory-input button:hover { background: rgba(0,229,255,0.2); }
+.memory-input button:hover { background: rgba(255,23,68,0.2); }
 
 /* ═══ ARCHIVES PANEL ═══ */
 #archives-btn {
@@ -762,6 +772,47 @@ body::before {
   letter-spacing: 0.5px;
 }
 
+.color-config-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.color-field {
+  background: var(--hull);
+  border: var(--hud-border);
+  border-radius: var(--r);
+  padding: 10px;
+}
+.color-field label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.color-field input[type="color"] {
+  width: 100%;
+  height: 38px;
+  background: var(--void);
+  border: 1px solid var(--wire);
+  border-radius: var(--r);
+  cursor: pointer;
+  padding: 3px;
+}
+.color-preview-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 5px;
+  margin-top: 10px;
+}
+.color-preview-strip span {
+  height: 6px;
+  border-radius: 999px;
+  box-shadow: 0 0 10px currentColor;
+}
+
 .info-block {
   background: var(--hull);
   border: var(--border);
@@ -784,7 +835,7 @@ body::before {
 }
 .success-block {
   background: var(--neon-dim);
-  border: 1px solid rgba(0,255,157,0.3);
+  border: 1px solid rgba(255,59,48,0.3);
   border-radius: var(--r);
   padding: 12px 14px;
   font-size: 12px;
@@ -815,8 +866,8 @@ body::before {
   top: 10px;
   width: 24px;
   height: 24px;
-  background: rgba(0,229,255,0.1);
-  border: 1px solid rgba(0,229,255,0.3);
+  background: rgba(255,23,68,0.1);
+  border: 1px solid rgba(255,23,68,0.3);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -850,7 +901,7 @@ body::before {
   border-top: var(--border);
 }
 .btn-primary {
-  background: linear-gradient(135deg, rgba(0,229,255,0.2), rgba(0,255,157,0.1));
+  background: linear-gradient(135deg, rgba(255,23,68,0.2), rgba(255,59,48,0.1));
   border: var(--border-cyan);
   color: var(--cyan);
   font-family: var(--font-display);
@@ -864,7 +915,7 @@ body::before {
   text-transform: uppercase;
 }
 .btn-primary:hover {
-  background: linear-gradient(135deg, rgba(0,229,255,0.3), rgba(0,255,157,0.2));
+  background: linear-gradient(135deg, rgba(255,23,68,0.3), rgba(255,59,48,0.2));
   box-shadow: 0 0 20px var(--cyan-glow);
 }
 .btn-ghost {
@@ -890,7 +941,7 @@ body::before {
   padding: 3px 8px;
   border-radius: 3px;
   background: var(--neon-dim);
-  border: 1px solid rgba(0,255,157,0.3);
+  border: 1px solid rgba(255,59,48,0.3);
   color: var(--neon);
   letter-spacing: 1px;
 }
@@ -901,7 +952,7 @@ body::before {
 }
 .badge-violet {
   background: var(--violet-dim);
-  border-color: rgba(124,58,237,0.4);
+  border-color: rgba(176,0,32,0.4);
   color: #a78bfa;
 }
 
@@ -943,7 +994,7 @@ body::before {
   position: absolute;
   width: 12px;
   height: 12px;
-  border-color: rgba(0,229,255,0.4);
+  border-color: rgba(255,23,68,0.4);
   border-style: solid;
 }
 .corner-tl { top: 0; left: 0; border-width: 1px 0 0 1px; }
@@ -990,8 +1041,8 @@ body::before {
   margin: 12px 0;
 }
 .export-zone:hover, .export-zone.dragover {
-  border-color: rgba(0,229,255,0.5);
-  background: rgba(0,229,255,0.03);
+  border-color: rgba(255,23,68,0.5);
+  background: rgba(255,23,68,0.03);
   box-shadow: 0 0 20px var(--cyan-dim);
 }
 .export-zone-icon { font-size: 28px; margin-bottom: 8px; }
@@ -1017,7 +1068,7 @@ body::before {
   justify-content: space-between;
   gap: 12px;
 }
-.agent-preview:hover { border-color: rgba(0,229,255,0.4); background: var(--plate); }
+.agent-preview:hover { border-color: rgba(255,23,68,0.4); background: var(--plate); }
 .agent-preview-name {
   font-family: var(--font-mono);
   font-size: 12px;
@@ -1032,7 +1083,7 @@ body::before {
   display: inline-block;
   width: 13px;
   height: 13px;
-  border: 2px solid rgba(0,229,255,0.2);
+  border: 2px solid rgba(255,23,68,0.2);
   border-top-color: var(--cyan);
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
@@ -1053,7 +1104,7 @@ body::before {
   font-weight: 900;
   letter-spacing: 12px;
   color: var(--text-bright);
-  text-shadow: 0 0 30px rgba(0,229,255,0.4);
+  text-shadow: 0 0 30px rgba(255,23,68,0.4);
   margin-bottom: 8px;
 }
 .welcome-banner .wv-sub {
@@ -1127,7 +1178,7 @@ body::before {
 
 /* ═══ RESPONSIVE ═══ */
 @media (max-width: 768px) {
-  #voanh-header { padding: 0 12px; gap: 10px; }
+  #libre-header { padding: 0 12px; gap: 10px; }
   .brand-name { font-size: 15px; letter-spacing: 3px; }
   .brand-sub { display: none; }
   .header-controls { display: none; }
@@ -1150,6 +1201,7 @@ body::before {
   #scroll-bottom { right: 58px; bottom: 75px; }
   #archives-btn { left: 62px; }
   #memory-toggle { right: 16px; }
+  .color-config-grid { grid-template-columns: 1fr; }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
@@ -1232,7 +1284,7 @@ body::before {
   font-weight: 900;
   letter-spacing: 10px;
   color: var(--text-bright);
-  text-shadow: 0 0 40px rgba(0,229,255,0.5);
+  text-shadow: 0 0 40px rgba(255,23,68,0.5);
 }
 .wizard-logo-sub {
   font-family: var(--font-mono);
@@ -1395,7 +1447,7 @@ body::before {
 
 /* ═══ FILE UPLOAD ═══ */
 .file-upload-zone {
-  border: 1px dashed rgba(0,229,255,0.3);
+  border: 1px dashed rgba(255,23,68,0.3);
   border-radius: var(--r);
   padding: 8px 12px;
   display: flex;
@@ -1477,7 +1529,7 @@ body::before {
   padding: 2px 7px;
   border-radius: 3px;
   background: var(--violet-dim);
-  border: 1px solid rgba(124,58,237,0.4);
+  border: 1px solid rgba(176,0,32,0.4);
   color: #a78bfa;
   letter-spacing: 1px;
 }
@@ -1514,7 +1566,7 @@ body::before {
 
 /* ═══ EXPORT PDF ═══ */
 @media print {
-  #voanh-header, #input-area, #memory-toggle, #memory-panel,
+  #libre-header, #input-area, #memory-toggle, #memory-panel,
   #archives-btn, #archives-panel, #scroll-bottom, .modal-overlay,
   #mobile-menu, #toast-container, .msg-actions, .msg-rating { display: none !important; }
   body { overflow: auto !important; background: white !important; color: #000 !important; }
@@ -1527,7 +1579,7 @@ body::before {
 <body>
 
 <!-- ═══════════════════ HEADER ═══════════════════ -->
-<header id="voanh-header">
+<header id="libre-header">
   <div class="brand">
     <div class="brand-logo">
       <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1541,7 +1593,7 @@ body::before {
       </svg>
     </div>
     <div>
-      <div class="brand-name" id="main-brand-name">VOANH</div>
+      <div class="brand-name" id="main-brand-name">LIBRE AI</div>
       <div class="brand-sub">PERSONAL AI PLATFORM v3.0</div>
     </div>
   </div>
@@ -1560,16 +1612,17 @@ body::before {
   <div class="header-right">
     <span class="status-pill" id="api-status"><span class="status-dot"></span>OFFLINE</span>
     <select class="hud-select" id="theme-select">
-      <option value="cyber">◈ CYBER</option>
+      <option value="redblack">◈ ROUGE/NOIR</option>
       <option value="midnight">◈ MIDNIGHT</option>
       <option value="light">◈ LIGHT</option>
+      <option value="custom">◈ CUSTOM</option>
     </select>
     <button class="hud-btn primary" id="open-api-modal">⬡ API KEY</button>
-    <button class="hud-btn" id="open-agent-modal">⚙ AGENT</button>
+    <button class="hud-btn" id="open-agent-modal"><i class="fa-solid fa-gear" aria-hidden="true"></i> AGENT</button>
     <button class="hud-btn" id="open-data-modal">⬡ DATA</button>
   </div>
   <!-- BURGER (mobile only) -->
-  <button id="burger-btn" title="Menu">☰</button>
+  <button id="burger-btn" title="Menu"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
 </header>
 
 <!-- ═══════════════════ MOBILE MENU ═══════════════════ -->
@@ -1578,9 +1631,10 @@ body::before {
   <div class="mobile-row">
     <span class="status-pill" id="api-status-mob"><span class="status-dot"></span>OFFLINE</span>
     <select class="hud-select" id="theme-select-mob" style="flex:1">
-      <option value="cyber">◈ CYBER</option>
+      <option value="redblack">◈ ROUGE/NOIR</option>
       <option value="midnight">◈ MIDNIGHT</option>
       <option value="light">◈ LIGHT</option>
+      <option value="custom">◈ CUSTOM</option>
     </select>
   </div>
   <!-- Row 2 : Modèle + Agent -->
@@ -1593,7 +1647,7 @@ body::before {
   <!-- Row 3 : Actions -->
   <div class="mobile-row">
     <button class="hud-btn primary" id="open-api-modal-mob" style="flex:1">⬡ API KEY</button>
-    <button class="hud-btn" id="open-agent-modal-mob" style="flex:1">⚙ AGENT</button>
+    <button class="hud-btn" id="open-agent-modal-mob" style="flex:1"><i class="fa-solid fa-gear" aria-hidden="true"></i> AGENT</button>
     <button class="hud-btn" id="open-data-modal-mob" style="flex:1">⬡ DATA</button>
   </div>
   <!-- Row 4 : Chat -->
@@ -1609,8 +1663,8 @@ body::before {
 
 <!-- ═══════════════════ INPUT ═══════════════════ -->
 <div id="input-area" style="position:relative">
-  <button id="voice-btn" title="Dictée vocale">🎤</button>
-  <button id="file-upload-btn" title="Joindre un fichier/image/audio" style="background:var(--hull);border:var(--hud-border);color:var(--text-dim);font-size:16px;width:46px;height:46px;border-radius:var(--r-lg);cursor:pointer;transition:var(--transition);display:flex;align-items:center;justify-content:center;flex-shrink:0;align-self:flex-end">📎</button>
+  <button id="voice-btn" title="Dictée vocale"><i class="fa-solid fa-microphone" aria-hidden="true"></i></button>
+  <button id="file-upload-btn" title="Joindre un fichier/image/audio" style="background:var(--hull);border:var(--hud-border);color:var(--text-dim);font-size:16px;width:46px;height:46px;border-radius:var(--r-lg);cursor:pointer;transition:var(--transition);display:flex;align-items:center;justify-content:center;flex-shrink:0;align-self:flex-end"><i class="fa-solid fa-paperclip" aria-hidden="true"></i></button>
   <input type="file" id="file-input" accept="image/*,audio/*,.pdf" style="display:none">
   <textarea id="user-input" placeholder="Transmettez votre message… (Entrée pour envoyer, Maj+Entrée pour nouvelle ligne)" rows="1"></textarea>
   <button id="send-btn">SEND ▶</button>
@@ -1655,20 +1709,20 @@ body::before {
     <div class="corner-deco corner-br"></div>
     <div class="modal-header">
       <div class="modal-title">⬡ ACTIVATION API MISTRAL</div>
-      <button class="modal-close" id="close-api-modal">✕</button>
+      <button class="modal-close" id="close-api-modal"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
     </div>
     <div class="modal-body">
 
       <!-- FORMULAIRE -->
       <div class="field-group">
-        <label class="field-label">🔑 Clé API Mistral</label>
+        <label class="field-label"><i class="fa-solid fa-key" aria-hidden="true"></i> Clé API Mistral</label>
         <input type="password" class="field-input" id="api-key-input" placeholder="Collez votre clé ici…">
         <div class="field-hint">Format : min. 20 caractères — ex. <code style="font-family:var(--font-mono);color:var(--text-code);font-size:11px">sk-xxxxxxxxxxxxxxxxxxxxxxxx</code></div>
       </div>
       <div class="btn-row" style="margin-top:0;padding-top:0;border-top:none;margin-bottom:20px">
         <button class="btn-ghost" id="close-api-modal-2">Annuler</button>
-        <button class="btn-ghost danger" id="delete-api-key" style="border-color:rgba(255,51,102,0.3);color:var(--danger)">🗑 SUPPRIMER</button>
-        <button class="btn-primary" id="save-api-key">💾 ENREGISTRER ET ACTIVER</button>
+        <button class="btn-ghost danger" id="delete-api-key" style="border-color:rgba(255,51,102,0.3);color:var(--danger)"><i class="fa-solid fa-trash" aria-hidden="true"></i> SUPPRIMER</button>
+        <button class="btn-primary" id="save-api-key"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> ENREGISTRER ET ACTIVER</button>
       </div>
 
       <!-- SÉPARATEUR -->
@@ -1676,7 +1730,7 @@ body::before {
 
       <!-- INFO TUTORIEL -->
       <div class="info-block" style="margin-top:12px">
-        <strong>✦ Free Tier Mistral AI — Chiffres Officiels 2025</strong><br>
+        <strong><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Free Tier Mistral AI — Chiffres Officiels 2025</strong><br>
         Le Free Tier de Mistral AI donne accès aux modèles via l'API sans abonnement payant. Les limites exactes dépendent du modèle utilisé, mais typiquement :
         <ul style="padding-left:16px;margin-top:8px;line-height:2">
           <li>Modèles légers (Ministral, Mistral Small) : <strong>~1 req/sec</strong>, plusieurs dizaines de milliers de tokens/min</li>
@@ -1691,17 +1745,17 @@ body::before {
       <ol class="step-list">
         <li>Ouvrez <strong><code>console.mistral.ai</code></strong> dans votre navigateur</li>
         <li>Cliquez sur <strong>"Sign Up"</strong> → créez votre compte (email + mot de passe, ou OAuth Google)</li>
-        <li>Dans le menu latéral, allez dans <strong>"API Keys"</strong> → cliquez <strong>"Create new key"</strong> → nommez-la (ex. <em>voanh-key</em>)</li>
+        <li>Dans le menu latéral, allez dans <strong>"API Keys"</strong> → cliquez <strong>"Create new key"</strong> → nommez-la (ex. <em>libre-ai-key</em>)</li>
         <li>Copiez la clé générée (visible <strong>une seule fois</strong>) → collez-la dans le champ ci-dessus</li>
       </ol>
 
       <div class="success-block">
-        <strong>🔒 Persistance garantie 365 jours</strong><br>
+        <strong><i class="fa-solid fa-lock" aria-hidden="true"></i> Persistance garantie 365 jours</strong><br>
         Votre clé API est stockée dans un cookie sécurisé <strong>ET</strong> dans le stockage local de votre navigateur. Elle est automatiquement restaurée à chaque visite et n'est jamais transmise à aucun serveur tiers — uniquement envoyée directement à <code style="font-size:11px;color:var(--neon)">api.mistral.ai</code>.
       </div>
 
       <div style="margin-top:12px;font-size:12px;color:var(--text-dim);text-align:center">
-        Documentation officielle : <a href="https://docs.mistral.ai" target="_blank" style="color:var(--cyan)">docs.mistral.ai</a>
+        Documentation officielle : <a href="https://docs.mistral.ai" target="_blank" rel="noopener noreferrer" style="color:var(--cyan)">docs.mistral.ai</a>
       </div>
     </div>
   </div>
@@ -1715,14 +1769,14 @@ body::before {
     <div class="corner-deco corner-bl"></div>
     <div class="corner-deco corner-br"></div>
     <div class="modal-header">
-      <div class="modal-title">⚙ CRÉER UN AGENT IA</div>
-      <button class="modal-close" id="close-agent-modal">✕</button>
+      <div class="modal-title"><i class="fa-solid fa-gear" aria-hidden="true"></i> CRÉER UN AGENT IA</div>
+      <button class="modal-close" id="close-agent-modal"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
     </div>
     <div class="modal-body">
 
       <!-- EXPLICATION DU CERVEAU CENTRAL -->
       <div class="info-block" style="border-left-color:var(--neon)">
-        <strong style="color:var(--neon)">▸ Qu'est-ce qu'un Agent VOANH ?</strong><br>
+        <strong style="color:var(--neon)">▸ Qu'est-ce qu'un Agent Libre AI ?</strong><br>
         Un Agent est un <em>cerveau central</em> qui dirige chaque conversation. Il définit la <strong>personnalité</strong>, le <strong>domaine d'expertise</strong>, le <strong>ton</strong> et les <strong>règles comportementales</strong> du modèle IA. Une fois activé, chaque réponse est façonnée par ses instructions. Vous pouvez créer plusieurs agents spécialisés (dev, rédaction, analyse, recherche…) et switcher selon la tâche.
       </div>
 
@@ -1732,7 +1786,7 @@ body::before {
       <div style="display:flex;align-items:center;gap:8px;margin:8px 0 4px">
         <button class="btn-ghost" id="import-agent-btn" style="font-size:10px;padding:5px 10px">⬆ IMPORTER UN AGENT</button>
         <input type="file" id="import-agent-input" accept=".json" style="display:none">
-        <button class="btn-ghost" id="generate-more-agents-btn" style="font-size:10px;padding:5px 10px;color:var(--neon);border-color:rgba(0,255,157,0.3)">✦ GÉNÉRER + D'AGENTS</button>
+        <button class="btn-ghost" id="generate-more-agents-btn" style="font-size:10px;padding:5px 10px;color:var(--neon);border-color:rgba(255,59,48,0.3)"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> GÉNÉRER + D'AGENTS</button>
       </div>
       <div class="section-title">CONFIGURATION DU NOUVEL AGENT</div>
 
@@ -1806,7 +1860,7 @@ body::before {
       </div>
       <div class="btn-row">
         <button class="btn-ghost" id="close-agent-modal-2">Annuler</button>
-        <button class="btn-primary" id="save-agent">⚙ CRÉER L'AGENT</button>
+        <button class="btn-primary" id="save-agent"><i class="fa-solid fa-gear" aria-hidden="true"></i> CRÉER L'AGENT</button>
       </div>
     </div>
   </div>
@@ -1821,7 +1875,7 @@ body::before {
     <div class="corner-deco corner-br"></div>
     <div class="modal-header">
       <div class="modal-title">⬡ GESTION DES DONNÉES</div>
-      <button class="modal-close" id="close-data-modal">✕</button>
+      <button class="modal-close" id="close-data-modal"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
     </div>
     <div class="modal-body">
 
@@ -1840,7 +1894,7 @@ body::before {
 
       <!-- EXPORT -->
       <div class="section-title">EXPORTER VOS DONNÉES</div>
-      <p style="font-size:12px;color:var(--text-dim);margin-bottom:12px;line-height:1.6">Téléchargez toutes vos données dans un fichier <code style="font-family:var(--font-mono);font-size:10px;color:var(--cyan)">.voanh.json</code> que vous pourrez réimporter à tout moment.</p>
+      <p style="font-size:12px;color:var(--text-dim);margin-bottom:12px;line-height:1.6">Téléchargez toutes vos données dans un fichier <code style="font-family:var(--font-mono);font-size:10px;color:var(--cyan)">.libre-ai.json</code> que vous pourrez réimporter à tout moment.</p>
       <button class="btn-primary" id="btn-export" style="width:100%;justify-content:center;display:flex;gap:8px;align-items:center">
         ⬇ TÉLÉCHARGER TOUTES LES DONNÉES
       </button>
@@ -1853,17 +1907,17 @@ body::before {
       <div class="export-zone" id="import-drop-zone">
         <div class="export-zone-icon">⬆</div>
         <div class="export-zone-text">
-          <strong id="import-zone-label">Glissez votre fichier .voanh.json ici</strong>
+          <strong id="import-zone-label">Glissez votre fichier .libre-ai.json ici</strong>
           ou cliquez pour sélectionner
         </div>
       </div>
-      <input type="file" id="import-file-input" accept=".json,.voanh.json" style="display:none">
+      <input type="file" id="import-file-input" accept=".json,.voanh.json,.libre-ai.json" style="display:none">
 
       <!-- Aperçu fichier sélectionné (caché par défaut) -->
       <div id="import-preview" style="display:none;background:var(--hull);border:var(--hud-border);border-radius:var(--r);padding:14px 16px;margin-top:10px">
         <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--cyan);margin-bottom:8px">FICHIER SÉLECTIONNÉ</div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-          <span style="font-size:22px">📄</span>
+          <span style="font-size:22px"><i class="fa-solid fa-file-lines" aria-hidden="true"></i></span>
           <div>
             <div id="import-filename" style="font-family:var(--font-mono);font-size:12px;color:var(--text-bright)">—</div>
             <div id="import-fileinfo" style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);margin-top:2px">—</div>
@@ -1873,9 +1927,9 @@ body::before {
           Analyse en cours…
         </div>
         <div style="display:flex;gap:8px">
-          <button class="btn-ghost" id="btn-import-cancel" style="flex:1">✕ Annuler</button>
+          <button class="btn-ghost" id="btn-import-cancel" style="flex:1"><i class="fa-solid fa-xmark" aria-hidden="true"></i> Annuler</button>
           <button class="btn-primary" id="btn-import-confirm" style="flex:2;justify-content:center;display:flex;gap:6px;align-items:center">
-            ✓ VALIDER ET RESTAURER
+            <i class="fa-solid fa-check" aria-hidden="true"></i> VALIDER ET RESTAURER
           </button>
         </div>
       </div>
@@ -1883,7 +1937,7 @@ body::before {
       <!-- DANGER ZONE -->
       <div class="section-title" style="border-top-color:rgba(255,51,102,0.3);color:rgba(255,51,102,0.6)">ZONE CRITIQUE</div>
       <button class="btn-ghost" id="btn-clear-all" style="width:100%;justify-content:center;display:flex;border-color:rgba(255,51,102,0.3);color:var(--danger)">
-        ⚠ SUPPRIMER TOUTES LES DONNÉES LOCALES
+        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> SUPPRIMER TOUTES LES DONNÉES LOCALES
       </button>
 
       <div class="btn-row" style="border-top:none;margin-top:12px;padding-top:0">
@@ -1906,7 +1960,7 @@ body::before {
     <!-- STEP 1: Welcome & API Key -->
     <div class="wizard-step active" id="wizard-step-1">
       <div class="wizard-logo">
-        <div class="wizard-logo-text">VOANH</div>
+        <div class="wizard-logo-text">LIBRE AI</div>
         <div class="wizard-logo-sub">PERSONAL AI PLATFORM</div>
       </div>
       <div class="wizard-progress">
@@ -1914,12 +1968,12 @@ body::before {
         <div class="wizard-dot" id="wdot-2"></div>
         <div class="wizard-dot" id="wdot-3"></div>
       </div>
-      <div class="wizard-title">Bienvenue sur VOANH AI</div>
+      <div class="wizard-title">Bienvenue sur Libre AI</div>
       <div class="wizard-subtitle">Votre IA personnelle, configurée selon votre vision.<br>Commençons par activer votre accès Mistral.</div>
       <div class="field-group">
-        <label class="field-label">🔑 Clé API Mistral <span style="color:var(--danger)">*</span></label>
+        <label class="field-label"><i class="fa-solid fa-key" aria-hidden="true"></i> Clé API Mistral <span style="color:var(--danger)">*</span></label>
         <input type="password" class="field-input" id="wizard-api-key" placeholder="Collez votre clé API Mistral ici…">
-        <div class="field-hint">Obtenez votre clé gratuite sur <a href="https://console.mistral.ai" target="_blank" style="color:var(--cyan)">console.mistral.ai</a> → API Keys</div>
+        <div class="field-hint">Obtenez votre clé gratuite sur <a href="https://console.mistral.ai" target="_blank" rel="noopener noreferrer" style="color:var(--cyan)">console.mistral.ai</a> → API Keys</div>
       </div>
       <div class="btn-row" style="border-top:none;padding-top:0">
         <button class="btn-primary" id="wizard-step1-next" style="width:100%;justify-content:center;display:flex">CONTINUER →</button>
@@ -1934,16 +1988,39 @@ body::before {
         <div class="wizard-dot" id="wdot-3b"></div>
       </div>
       <div class="wizard-title">Définissez votre IA</div>
-      <div class="wizard-subtitle">Ces informations permettront à VOANH de générer automatiquement 20 agents spécialisés parfaitement adaptés à votre contexte.</div>
+      <div class="wizard-subtitle">Ces informations permettront à Libre AI de générer automatiquement 20 agents spécialisés parfaitement adaptés à votre contexte.</div>
       <div class="field-group">
-        <label class="field-label">🎯 Nom de votre IA <span style="color:var(--danger)">*</span></label>
+        <label class="field-label"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> Nom de votre IA <span style="color:var(--danger)">*</span></label>
         <input type="text" class="field-input" id="wizard-ai-name" placeholder="Ex : Atlas, Sentinel, Nexus, MyAssistant…">
         <div class="field-hint">Ce nom sera affiché dans l'interface et utilisé par vos agents.</div>
       </div>
       <div class="field-group">
-        <label class="field-label">🚀 But principal de votre IA <span style="color:var(--danger)">*</span></label>
+        <label class="field-label"><i class="fa-solid fa-rocket" aria-hidden="true"></i> But principal de votre IA <span style="color:var(--danger)">*</span></label>
         <textarea class="field-textarea" id="wizard-ai-goal" rows="3" placeholder="Décrivez votre contexte et objectif. Ex : &#10;'Je suis développeur freelance web, j'ai besoin d'une IA pour m'aider avec le code, la gestion de projets clients, la rédaction de propositions commerciales et la veille technologique.'&#10;ou&#10;'Je suis étudiant en médecine, j'ai besoin d'aide pour réviser, comprendre des cas cliniques, préparer mes examens et m'organiser.'"></textarea>
         <div class="field-hint">▸ Plus vous êtes précis, plus les agents générés seront pertinents.</div>
+      </div>
+      <div class="field-group">
+        <label class="field-label"><i class="fa-solid fa-palette" aria-hidden="true"></i> Couleurs de l'interface</label>
+        <div class="color-config-grid">
+          <div class="color-field">
+            <label for="wizard-color-primary">Primaire</label>
+            <input type="color" id="wizard-color-primary" value="#ff1744">
+          </div>
+          <div class="color-field">
+            <label for="wizard-color-secondary">Secondaire</label>
+            <input type="color" id="wizard-color-secondary" value="#ff3b30">
+          </div>
+          <div class="color-field">
+            <label for="wizard-color-accent">Accent</label>
+            <input type="color" id="wizard-color-accent" value="#ff8a3d">
+          </div>
+        </div>
+        <div class="color-preview-strip" id="wizard-color-preview">
+          <span style="background:#ff1744;color:#ff1744"></span>
+          <span style="background:#ff3b30;color:#ff3b30"></span>
+          <span style="background:#ff8a3d;color:#ff8a3d"></span>
+        </div>
+        <div class="field-hint">▸ Par défaut: interface rouge et noir. Ces couleurs pourront être changées ensuite via le thème CUSTOM.</div>
       </div>
       <div class="btn-row" style="border-top:none;padding-top:0">
         <button class="btn-ghost" id="wizard-step2-back">← Retour</button>
@@ -1961,14 +2038,14 @@ body::before {
       <div class="wizard-title" id="wizard-step3-title">Génération des Agents IA</div>
       <div class="wizard-subtitle" id="wizard-step3-sub">Mistral analyse votre profil et crée 20 agents ultra-spécialisés…</div>
       <div class="wizard-generating" id="wizard-gen-loader">
-        <div class="wizard-gen-icon">⚙</div>
+        <div class="wizard-gen-icon"><i class="fa-solid fa-gear" aria-hidden="true"></i></div>
         <div class="wizard-gen-status">GÉNÉRATION EN COURS…</div>
         <div class="wizard-gen-detail" id="wizard-gen-detail">Connexion à Mistral AI…</div>
       </div>
       <div id="wizard-agents-preview" style="display:none">
         <div class="agent-gen-grid" id="wizard-agents-grid"></div>
         <div class="btn-row" style="border-top:none;padding-top:8px">
-          <button class="btn-primary" id="wizard-finish" style="width:100%;justify-content:center;display:flex">🚀 LANCER VOANH AI →</button>
+          <button class="btn-primary" id="wizard-finish" style="width:100%;justify-content:center;display:flex"><i class="fa-solid fa-rocket" aria-hidden="true"></i> LANCER LIBRE AI →</button>
         </div>
       </div>
       <div id="wizard-gen-error" style="display:none">
@@ -1993,8 +2070,8 @@ body::before {
     <div class="corner-deco corner-bl"></div>
     <div class="corner-deco corner-br"></div>
     <div class="modal-header">
-      <div class="modal-title">✏ MODIFIER L'AGENT</div>
-      <button class="modal-close" id="close-edit-agent-modal">✕</button>
+      <div class="modal-title"><i class="fa-solid fa-pen" aria-hidden="true"></i> MODIFIER L'AGENT</div>
+      <button class="modal-close" id="close-edit-agent-modal"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="edit-agent-id">
@@ -2075,8 +2152,8 @@ body::before {
       </div>
       <div class="btn-row">
         <button class="btn-ghost" id="close-edit-agent-modal-2">Annuler</button>
-        <button class="btn-ghost" id="duplicate-agent-btn" style="color:var(--neon);border-color:rgba(0,255,157,0.3)">⎘ Dupliquer</button>
-        <button class="btn-primary" id="save-edit-agent">💾 ENREGISTRER</button>
+        <button class="btn-ghost" id="duplicate-agent-btn" style="color:var(--neon);border-color:rgba(255,59,48,0.3)">⎘ Dupliquer</button>
+        <button class="btn-primary" id="save-edit-agent"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> ENREGISTRER</button>
       </div>
     </div>
   </div>
@@ -2091,26 +2168,26 @@ body::before {
 // CONFIG
 // ════════════════════════════════════════
 const MODELS = [
-  { id:"mistral-large-2512",          name:"🔥 Mistral Omega — Le Plus Puissant",  badge:"🔥 Puissant",  desc:"Raisonnement complexe, analyse longue, meilleure qualité",   tokens:50000,  ctx:"4M",   temp:0.42 },
-  { id:"mistral-medium-2508",         name:"⚡ Mistral Zenith — Meilleur Ratio",   badge:"⚡ Rapide",    desc:"Meilleur rapport qualité/vitesse pour usage quotidien",       tokens:375000, ctx:"-",    temp:0.48 },
-  { id:"codestral-2508",              name:"💻 CodeForge (Codestral) — Code",      badge:"💻 Code",      desc:"Expert génération et optimisation de code, tous langages",    tokens:50000,  ctx:"4M",   temp:0.48 },
-  { id:"devstral-2512",               name:"💻 DevMind Ultra — Dev Full-Stack",    badge:"💻 Dev",       desc:"Développement full-stack, architecture, debugging avancé",    tokens:50000,  ctx:"4M",   temp:0.48 },
-  { id:"devstral-medium-2507",        name:"💻 DevPulse Medium — Dev Quotidien",   badge:"💻 Dev",       desc:"Équilibre parfait pour le développement quotidien",           tokens:50000,  ctx:"4M",   temp:0.42 },
-  { id:"devstral-small-2507",         name:"⚡ DevSpark Lite — Dev Rapide",        badge:"⚡ Rapide",    desc:"Rapide et léger pour tâches dev simples",                     tokens:50000,  ctx:"4M",   temp:0.42 },
-  { id:"ministral-8b-2512",           name:"⚡ MicroGenius 8B — Usage Quotidien",  badge:"⚡ Rapide",    desc:"Compact, rapide, parfait pour questions et tâches courantes", tokens:50000,  ctx:"4M",   temp:0.42 },
-  { id:"ministral-3b-2512",           name:"⚡ NanoMind 3B — Ultra Rapide",        badge:"⚡ Ultra",     desc:"Ultra-rapide, idéal pour micro-tâches et réponses rapides",   tokens:50000,  ctx:"4M",   temp:0.42 },
-  { id:"ministral-14b-2512",          name:"🔥 MiniTitan 14B — Haute Performance", badge:"🔥 Puissant",  desc:"Performance dense, efficacité maximale, meilleur 14B",        tokens:50000,  ctx:"4M",   temp:0.42 },
-  { id:"magistral-medium-2509",       name:"🔥 MagiCore — Raisonnement",          badge:"🔥 Raisonnement", desc:"Puissance maîtrisée pour raisonnement et analyse",          tokens:75000,  ctx:"1B",   temp:0.48 },
-  { id:"magistral-small-2509",        name:"⚡ MagiSwift — Raisonnement Rapide",  badge:"⚡ Rapid-Reason", desc:"Raisonnement rapide et précis, contexte 1B",               tokens:75000,  ctx:"1B",   temp:0.48 },
-  { id:"mistral-medium-2505",         name:"🔥 Mistral Equinox — Contexte Long",  badge:"🔥 Long ctx",  desc:"Contexte 375k tokens, analyses de longs documents",           tokens:375000, ctx:"-",    temp:0.48 },
-  { id:"mistral-small-2506",          name:"⚡ Mistral Flash — Instantané",       badge:"⚡ Flash",     desc:"Réponses instantanées, faible latence, très économique",       tokens:50000,  ctx:"4M",   temp:0.42 },
-  { id:"mistral-small-2603",          name:"⚡ Mistral Nova — Contexte Long",     badge:"⚡ Long ctx",  desc:"Contexte très large 375k, analyse de longues conversations",  tokens:375000, ctx:"-",    temp:1.44 },
-  { id:"labs-mistral-small-creative", name:"✨ CreatiFlow — Créatif",             badge:"✨ Créatif",   desc:"Explosion créative pour brainstorming et idées innovantes",   tokens:50000,  ctx:"4M",   temp:0.42 },
-  { id:"open-mistral-nemo",           name:"⚡ Nemo OpenCore — Open Source",      badge:"⚡ Open",      desc:"Polyvalent, open-source, fiable et gratuit",                  tokens:50000,  ctx:"4M",   temp:0.42 },
-  { id:"pixtral-12b-2409",            name:"👁 Pixtral Vision — Analyse Images",  badge:"👁 Vision",    desc:"Analyse visuelle multimodale, comprend images et texte",       tokens:50000,  ctx:"4M",   temp:0.42, vision:true },
-  { id:"pixtral-large-2411",          name:"👁 Pixtral OmniSight — Vision Pro",   badge:"👁 Vision Pro", desc:"Vision premium, compréhension profonde d'images complexes",  tokens:50000,  ctx:"4M",   temp:0.42, vision:true },
-  { id:"voxtral-mini-2507",           name:"🎵 Voxtral Echo — Audio Léger",       badge:"🎵 Audio",     desc:"Traitement audio, transcription légère et précise",            tokens:50000,  ctx:"4M",   temp:0.42, audio:true },
-  { id:"voxtral-small-2507",          name:"🎵 Voxtral Sonic — Audio Rapide",     badge:"🎵 Audio",     desc:"Audio rapide, transcription intelligente multi-langues",       tokens:50000,  ctx:"4M",   temp:0.42, audio:true }
+  { id:"mistral-large-2512",          name:"Mistral Omega — Le Plus Puissant",  badge:"Puissant",  desc:"Raisonnement complexe, analyse longue, meilleure qualité",   tokens:50000,  ctx:"4M",   temp:0.42 },
+  { id:"mistral-medium-2508",         name:"Mistral Zenith — Meilleur Ratio",   badge:"Rapide",    desc:"Meilleur rapport qualité/vitesse pour usage quotidien",       tokens:375000, ctx:"-",    temp:0.48 },
+  { id:"codestral-2508",              name:"CodeForge (Codestral) — Code",      badge:"Code",      desc:"Expert génération et optimisation de code, tous langages",    tokens:50000,  ctx:"4M",   temp:0.48 },
+  { id:"devstral-2512",               name:"DevMind Ultra — Dev Full-Stack",    badge:"Dev",       desc:"Développement full-stack, architecture, debugging avancé",    tokens:50000,  ctx:"4M",   temp:0.48 },
+  { id:"devstral-medium-2507",        name:"DevPulse Medium — Dev Quotidien",   badge:"Dev",       desc:"Équilibre parfait pour le développement quotidien",           tokens:50000,  ctx:"4M",   temp:0.42 },
+  { id:"devstral-small-2507",         name:"DevSpark Lite — Dev Rapide",        badge:"Rapide",    desc:"Rapide et léger pour tâches dev simples",                     tokens:50000,  ctx:"4M",   temp:0.42 },
+  { id:"ministral-8b-2512",           name:"MicroGenius 8B — Usage Quotidien",  badge:"Rapide",    desc:"Compact, rapide, parfait pour questions et tâches courantes", tokens:50000,  ctx:"4M",   temp:0.42 },
+  { id:"ministral-3b-2512",           name:"NanoMind 3B — Ultra Rapide",        badge:"Ultra",     desc:"Ultra-rapide, idéal pour micro-tâches et réponses rapides",   tokens:50000,  ctx:"4M",   temp:0.42 },
+  { id:"ministral-14b-2512",          name:"MiniTitan 14B — Haute Performance", badge:"Puissant",  desc:"Performance dense, efficacité maximale, meilleur 14B",        tokens:50000,  ctx:"4M",   temp:0.42 },
+  { id:"magistral-medium-2509",       name:"MagiCore — Raisonnement",          badge:"Raisonnement", desc:"Puissance maîtrisée pour raisonnement et analyse",          tokens:75000,  ctx:"1B",   temp:0.48 },
+  { id:"magistral-small-2509",        name:"MagiSwift — Raisonnement Rapide",  badge:"Rapid-Reason", desc:"Raisonnement rapide et précis, contexte 1B",               tokens:75000,  ctx:"1B",   temp:0.48 },
+  { id:"mistral-medium-2505",         name:"Mistral Equinox — Contexte Long",  badge:"Long ctx",  desc:"Contexte 375k tokens, analyses de longs documents",           tokens:375000, ctx:"-",    temp:0.48 },
+  { id:"mistral-small-2506",          name:"Mistral Flash — Instantané",       badge:"Flash",     desc:"Réponses instantanées, faible latence, très économique",       tokens:50000,  ctx:"4M",   temp:0.42 },
+  { id:"mistral-small-2603",          name:"Mistral Nova — Contexte Long",     badge:"Long ctx",  desc:"Contexte très large 375k, analyse de longues conversations",  tokens:375000, ctx:"-",    temp:1.44 },
+  { id:"labs-mistral-small-creative", name:"CreatiFlow — Créatif",             badge:"Créatif",   desc:"Explosion créative pour brainstorming et idées innovantes",   tokens:50000,  ctx:"4M",   temp:0.42 },
+  { id:"open-mistral-nemo",           name:"Nemo OpenCore — Open Source",      badge:"Open",      desc:"Polyvalent, open-source, fiable et gratuit",                  tokens:50000,  ctx:"4M",   temp:0.42 },
+  { id:"pixtral-12b-2409",            name:"Pixtral Vision — Analyse Images",  badge:"Vision",    desc:"Analyse visuelle multimodale, comprend images et texte",       tokens:50000,  ctx:"4M",   temp:0.42, vision:true },
+  { id:"pixtral-large-2411",          name:"Pixtral OmniSight — Vision Pro",   badge:"Vision Pro", desc:"Vision premium, compréhension profonde d'images complexes",  tokens:50000,  ctx:"4M",   temp:0.42, vision:true },
+  { id:"voxtral-mini-2507",           name:"Voxtral Echo — Audio Léger",       badge:"Audio",     desc:"Traitement audio, transcription légère et précise",            tokens:50000,  ctx:"4M",   temp:0.42, audio:true },
+  { id:"voxtral-small-2507",          name:"Voxtral Sonic — Audio Rapide",     badge:"Audio",     desc:"Audio rapide, transcription intelligente multi-langues",       tokens:50000,  ctx:"4M",   temp:0.42, audio:true }
 ];
 
 const DB_NAME = "VOANH_AI_DB";
@@ -2124,6 +2201,7 @@ let state = {
   model: "codestral-2508",
   globalMemories: [],
   aiConfig: null, // {name, goal} from wizard
+  customTheme: null,
   attachedFile: null  // {type, data, name, mimeType}
 };
 
@@ -2141,11 +2219,80 @@ const escapeHtml = t => (t||'')
   .replace(/>/g,"&gt;")
   .replace(/\n/g,"<br>");
 
+const escapeAttr = t => escapeHtml(String(t ?? ''))
+  .replace(/"/g,"&quot;")
+  .replace(/'/g,"&#39;");
+
+const jsArg = v => JSON.stringify(String(v ?? ''))
+  .replace(/'/g,"\\u0027")
+  .replace(/</g,"\\u003C")
+  .replace(/>/g,"\\u003E")
+  .replace(/&/g,"\\u0026");
+
+const safeImageSrc = src => {
+  const s = String(src || '');
+  return /^data:image\/(?:png|jpe?g|gif|webp|bmp|svg\+xml);base64,[A-Za-z0-9+/=]+$/i.test(s) ? s : '';
+};
+
+const faIcon = (name, label = '') => `<i class="fa-solid fa-${name}" aria-hidden="true"></i>${label ? ' ' + label : ''}`;
+
+const normalizeTheme = theme => theme === 'cyber' ? 'redblack' : (theme || 'redblack');
+const hexToRgb = hex => {
+  const clean = String(hex || '').replace('#', '');
+  if (!/^[0-9a-f]{6}$/i.test(clean)) return { r: 255, g: 23, b: 68 };
+  return {
+    r: parseInt(clean.slice(0, 2), 16),
+    g: parseInt(clean.slice(2, 4), 16),
+    b: parseInt(clean.slice(4, 6), 16)
+  };
+};
+const setRgbVar = (name, rgb, alpha) => {
+  document.documentElement.style.setProperty(name, `rgba(${rgb.r},${rgb.g},${rgb.b},${alpha})`);
+};
+const clearCustomTheme = () => {
+  ['--cyan','--cyan-dim','--cyan-glow','--neon','--neon-dim','--plasma','--plasma-dim','--border-cyan','--hud-border'].forEach(v => {
+    document.documentElement.style.removeProperty(v);
+  });
+};
+function applyCustomTheme(theme) {
+  const cfg = theme || state.customTheme || {};
+  const primary = cfg.primary || '#ff1744';
+  const secondary = cfg.secondary || '#ff3b30';
+  const accent = cfg.accent || '#ff8a3d';
+  const p = hexToRgb(primary);
+  const s = hexToRgb(secondary);
+  const a = hexToRgb(accent);
+  document.documentElement.style.setProperty('--cyan', primary);
+  document.documentElement.style.setProperty('--neon', secondary);
+  document.documentElement.style.setProperty('--plasma', accent);
+  setRgbVar('--cyan-dim', p, 0.15);
+  setRgbVar('--cyan-glow', p, 0.38);
+  setRgbVar('--neon-dim', s, 0.12);
+  setRgbVar('--plasma-dim', a, 0.15);
+  document.documentElement.style.setProperty('--border-cyan', `1px solid rgba(${p.r},${p.g},${p.b},0.3)`);
+  document.documentElement.style.setProperty('--hud-border', `1px solid rgba(${p.r},${p.g},${p.b},0.24)`);
+}
+function applyTheme(theme, customTheme = state.customTheme) {
+  const normalized = normalizeTheme(theme);
+  document.documentElement.dataset.theme = normalized;
+  if (normalized === 'custom') applyCustomTheme(customTheme);
+  else clearCustomTheme();
+  const desktop = $("#theme-select");
+  const mobile = $("#theme-select-mob");
+  if (desktop) desktop.value = normalized;
+  if (mobile) mobile.value = normalized;
+}
+
 const toast = (msg, type = "info") => {
   const t = document.createElement("div");
   t.className = `toast ${type}`;
-  const icon = type === "error" ? "⚠" : type === "success" ? "✓" : "◈";
-  t.innerHTML = `<span style="color:${type==='error'?'var(--danger)':type==='success'?'var(--neon)':'var(--cyan)'}">${icon}</span><span>${msg}</span>`;
+  const iconEl = document.createElement("i");
+  iconEl.className = type === "error" ? "fa-solid fa-triangle-exclamation" : type === "success" ? "fa-solid fa-check" : "fa-solid fa-circle-info";
+  iconEl.setAttribute("aria-hidden", "true");
+  iconEl.style.color = type === 'error' ? 'var(--danger)' : type === 'success' ? 'var(--neon)' : 'var(--cyan)';
+  const msgEl = document.createElement("span");
+  msgEl.textContent = String(msg ?? '');
+  t.append(iconEl, msgEl);
   $("#toast-container").appendChild(t);
   setTimeout(() => t.remove(), 3800);
 };
@@ -2156,7 +2303,7 @@ const setCookie = (n, v, d = 365) => {
     const e = new Date(); e.setDate(e.getDate() + d);
     document.cookie = `${n}=${encodeURIComponent(v)};expires=${e.toUTCString()};path=/;SameSite=Strict`;
   } catch(err) {}
-  try { localStorage.setItem('voanh_' + n, v); } catch(err) {}
+  try { localStorage.setItem('libre_ai_' + n, v); } catch(err) {}
 };
 const getCookie = n => {
   // Priorité : cookie, puis localStorage
@@ -2164,11 +2311,19 @@ const getCookie = n => {
     const m = document.cookie.match('(^|;)\\s*' + n + '\\s*=\\s*([^;]+)');
     if (m) return decodeURIComponent(m.pop());
   } catch(err) {}
-  try { const v = localStorage.getItem('voanh_' + n); if (v) return v; } catch(err) {}
+  try { const v = localStorage.getItem('libre_ai_' + n); if (v) return v; } catch(err) {}
+  try {
+    const legacy = localStorage.getItem('voanh_' + n);
+    if (legacy) {
+      localStorage.setItem('libre_ai_' + n, legacy);
+      return legacy;
+    }
+  } catch(err) {}
   return null;
 };
 const deleteCookie = n => {
   try { document.cookie = `${n}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;SameSite=Strict`; } catch(err) {}
+  try { localStorage.removeItem('libre_ai_' + n); } catch(err) {}
   try { localStorage.removeItem('voanh_' + n); } catch(err) {}
 };
 
@@ -2270,7 +2425,7 @@ function renderMemoryList() {
   list.innerHTML = state.globalMemories.slice(-12).reverse().map(m => `
     <div class="memory-item">
       <div class="content">${escapeHtml(m.content)}</div>
-      <div class="actions"><button onclick="memoryDelete('${m.id}')">✕</button></div>
+      <div class="actions"><button onclick='memoryDelete(${jsArg(m.id)})'>${faIcon('xmark')}</button></div>
     </div>
   `).join('');
 }
@@ -2309,8 +2464,8 @@ function renderMessages() {
   if (!msgs.length) {
     c.innerHTML = `
       <div class="welcome-banner">
-        <div class="wv-logo">VOANH</div>
-        <div class="wv-sub">Satoshi Nakamoto AI PLATFORM v3.0</div>
+        <div class="wv-logo">LIBRE AI</div>
+        <div class="wv-sub">PERSONAL AI PLATFORM v3.0</div>
         <p>Interface avancée avec mémoire globale, agents spécialisés et accès aux ${MODELS.length} modèles Mistral AI. Configurez votre clé API pour commencer.</p>
       </div>`;
     return;
@@ -2321,24 +2476,27 @@ function renderMessages() {
     const div = document.createElement("div");
     div.className = `message ${m.role}`;
     const memTags = m.memoryUsed?.length ? `<span class="mem-tag">⬡ MEM×${m.memoryUsed.length}</span>` : '';
-    const label = m.role === 'user' ? '▸ VOUS' : `▸ ${state.agent ? state.agent.name.toUpperCase() : 'VOANH'}`;
+    const label = m.role === 'user' ? '▸ VOUS' : `▸ ${state.agent ? String(state.agent.name || 'Libre AI').toUpperCase() : 'LIBRE AI'}`;
     const msgId = m.ts || Date.now();
-    const memoBtn = m.role === 'assistant' ? '<button class="msg-action-btn" onclick="saveToMemory(' + msgId + ')">⬡ MÉMO</button>' : '';
-    const printBtn = m.role === 'assistant' ? '<button class="msg-action-btn" onclick="window.print()">🖨 PDF</button>' : '';
-    const ratingHtml = m.role === 'assistant' ? `<div class="msg-rating"><span class="rating-label">QUALITÉ</span>${[1,2,3,4,5].map(s => `<button class="rating-star${(m.rating||0)>=s?' active':''}" onclick="rateMessage(${msgId},${s})">★</button>`).join('')}</div>` : '';
-    const imgHtml = m.imageData ? `<div class="msg-image"><img src="${m.imageData}" alt="Image jointe" loading="lazy"></div>` : '';
-    const audioHtml = m.audioName ? `<div style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);margin-top:4px">🎵 ${m.audioName}</div>` : '';
+    const msgArg = jsArg(msgId);
+    const msgDomId = escapeAttr(msgId);
+    const memoBtn = m.role === 'assistant' ? `<button class="msg-action-btn" onclick='saveToMemory(${msgArg})'>⬡ MÉMO</button>` : '';
+    const printBtn = m.role === 'assistant' ? `<button class="msg-action-btn" onclick="window.print()">${faIcon('print', 'PDF')}</button>` : '';
+    const ratingHtml = m.role === 'assistant' ? `<div class="msg-rating"><span class="rating-label">QUALITÉ</span>${[1,2,3,4,5].map(s => `<button class="rating-star${(m.rating||0)>=s?' active':''}" onclick='rateMessage(${msgArg},${s})'><i class="fa-solid fa-star" aria-hidden="true"></i></button>`).join('')}</div>` : '';
+    const safeImg = safeImageSrc(m.imageData);
+    const imgHtml = safeImg ? `<div class="msg-image"><img src="${safeImg}" alt="Image jointe" loading="lazy"></div>` : '';
+    const audioHtml = m.audioName ? `<div style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);margin-top:4px">${faIcon('music')} ${escapeHtml(m.audioName)}</div>` : '';
     div.innerHTML = `
-      <div class="msg-label">${label}</div>
+      <div class="msg-label">${escapeHtml(label)}</div>
       ${imgHtml}${audioHtml}
-      <div class="message-content" id="mc-${msgId}">${escapeHtml(m.content || '')}</div>
+      <div class="message-content" id="mc-${msgDomId}">${escapeHtml(m.content || '')}</div>
       <div class="msg-meta">
         <span>${new Date(m.ts).toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit',second:'2-digit'})}</span>
         ${memTags}
       </div>
       ${ratingHtml}
       <div class="msg-actions">
-        <button class="msg-action-btn" onclick="copyMsg(${msgId})">⎘ COPIER</button>
+        <button class="msg-action-btn" onclick='copyMsg(${msgArg})'>⎘ COPIER</button>
         ${memoBtn}
         ${printBtn}
       </div>`;
@@ -2364,7 +2522,7 @@ function hideTyping() {
 // SYSTEM PROMPT
 // ════════════════════════════════════════
 function buildSystemPrompt() {
-  const aiName = state.aiConfig?.name || 'VOANH';
+  const aiName = state.aiConfig?.name || 'Libre AI';
   let prompt = `You are ${aiName}, a powerful AI assistant. Be precise, professional, and helpful.`;
   if (state.agent) {
     prompt = `[AGENT ${aiName} : ${state.agent.name}]\n`;
@@ -2427,8 +2585,9 @@ async function renderArchives() {
       const isFav = c.fav ? true : false;
       const msgCount = (c.messages||[]).filter(m=>m.role!=='system').length;
       const date = c.updated ? new Date(c.updated).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '';
-      return `<div class="archive-item${isActive?' active-chat':''}" onclick="loadArchiveChat('${c.id}')">
-        <span class="archive-item-icon">${isFav?'★':'◈'}</span>
+      const chatArg = jsArg(c.id);
+      return `<div class="archive-item${isActive?' active-chat':''}" onclick='loadArchiveChat(${chatArg})'>
+        <span class="archive-item-icon">${isFav ? faIcon('star') : faIcon('diamond')}</span>
         <div class="archive-item-content">
           <div class="archive-item-title">${escapeHtml(c.title||'Sans titre')}</div>
           <div class="archive-item-meta">
@@ -2436,8 +2595,8 @@ async function renderArchives() {
             <span>${date}</span>
           </div>
         </div>
-        <button class="archive-fav-btn${isFav?' fav':''}" onclick="event.stopPropagation();toggleFav('${c.id}')" title="${isFav?'Retirer favoris':'Ajouter favoris'}">${isFav?'★':'☆'}</button>
-        <button class="archive-item-del" onclick="event.stopPropagation();deleteArchiveChat('${c.id}')" title="Supprimer">✕</button>
+        <button class="archive-fav-btn${isFav?' fav':''}" onclick='event.stopPropagation();toggleFav(${chatArg})' title="${isFav?'Retirer favoris':'Ajouter favoris'}">${isFav ? faIcon('star') : '<i class="fa-regular fa-star" aria-hidden="true"></i>'}</button>
+        <button class="archive-item-del" onclick='event.stopPropagation();deleteArchiveChat(${chatArg})' title="Supprimer">${faIcon('xmark')}</button>
       </div>`;
     }).join('');
   } catch(e) { list.innerHTML = '<div class="archive-empty">Erreur de chargement</div>'; }
@@ -2589,7 +2748,7 @@ async function _sendMessageOriginal() {
   } catch (e) {
     hideTyping();
     toast(`Erreur API : ${e.message}`, "error");
-    state.messages.push({ role:"assistant", content:`⚠ Requête échouée : ${e.message}`, ts:now() });
+    state.messages.push({ role:"assistant", content:`Requête échouée : ${e.message}`, ts:now() });
     renderMessages();
   } finally {
     $("#send-btn").disabled = false;
@@ -2619,20 +2778,22 @@ async function loadAgents() {
       }
       list.innerHTML = `
         <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--text-dim);margin-bottom:10px">AGENTS EXISTANTS (${agents.length})</div>
-        ${agents.map(a => `
-          <div class="agent-preview" onclick="activateAgent('${a.id}')">
+        ${agents.map(a => {
+          const agentArg = jsArg(a.id);
+          return `
+          <div class="agent-preview" onclick='activateAgent(${agentArg})'>
             <div style="flex:1;min-width:0">
               <div class="agent-preview-name">◈ ${escapeHtml(a.name)}</div>
               <div class="agent-preview-desc">${escapeHtml((a.desc||'').slice(0,80))}${(a.desc||'').length>80?'…':''}</div>
             </div>
             <div class="agent-card-actions">
-              <button class="agent-action-btn" onclick="event.stopPropagation();openEditAgent('${a.id}')" title="Modifier">✎</button>
-              <button class="agent-action-btn" onclick="event.stopPropagation();duplicateAgentById('${a.id}')" title="Dupliquer">⎘</button>
-              <button class="agent-action-btn" onclick="event.stopPropagation();exportAgent('${a.id}')" title="Exporter">⬇</button>
-              <button class="agent-action-btn danger" onclick="event.stopPropagation();deleteAgent('${a.id}')" title="Supprimer">✕</button>
+              <button class="agent-action-btn" onclick='event.stopPropagation();openEditAgent(${agentArg})' title="Modifier">${faIcon('pen')}</button>
+              <button class="agent-action-btn" onclick='event.stopPropagation();duplicateAgentById(${agentArg})' title="Dupliquer">⎘</button>
+              <button class="agent-action-btn" onclick='event.stopPropagation();exportAgent(${agentArg})' title="Exporter">⬇</button>
+              <button class="agent-action-btn danger" onclick='event.stopPropagation();deleteAgent(${agentArg})' title="Supprimer">${faIcon('xmark')}</button>
             </div>
           </div>
-        `).join('')}
+        `}).join('')}
       `;
     }
   } catch(e) { console.error("loadAgents:", e); }
@@ -2686,14 +2847,14 @@ async function exportData() {
     const payload = {
       version: "2.0",
       exported: new Date().toISOString(),
-      source: "VOANH",
+      source: "Libre AI",
       data: { chats, agents, global_memory: mems, settings }
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `voanh-backup-${new Date().toISOString().slice(0,10)}.voanh.json`;
+    a.download = `libre-ai-backup-${new Date().toISOString().slice(0,10)}.libre-ai.json`;
     a.click();
     URL.revokeObjectURL(url);
     toast("Données exportées avec succès !", "success");
@@ -2731,7 +2892,7 @@ async function importData(file) {
 // RATING SYSTEM
 // ════════════════════════════════════════
 window.rateMessage = async (ts, score) => {
-  const msg = (state.messages||[]).find(m => m.ts === ts);
+  const msg = (state.messages||[]).find(m => String(m.ts) === String(ts));
   if (!msg) return;
   msg.rating = score;
   await saveChat();
@@ -2801,8 +2962,21 @@ function updateFilePreview() {
     preview.className = 'file-preview';
     area.parentNode.insertBefore(preview, area);
   }
-  const icon = state.attachedFile.type === 'image' ? '🖼' : '🎵';
-  preview.innerHTML = `${icon} <strong style="color:var(--cyan)">${state.attachedFile.name}</strong><button class="file-preview-remove" onclick="clearAttachedFile()">✕ Retirer</button>`;
+  const icon = state.attachedFile.type === 'image' ? 'image' : 'music';
+  preview.textContent = '';
+  const typeIcon = document.createElement('i');
+  typeIcon.className = `fa-solid fa-${icon}`;
+  typeIcon.setAttribute('aria-hidden', 'true');
+  preview.append(typeIcon, document.createTextNode(' '));
+  const name = document.createElement('strong');
+  name.style.color = 'var(--cyan)';
+  name.textContent = state.attachedFile.name || 'Fichier joint';
+  const remove = document.createElement('button');
+  remove.className = 'file-preview-remove';
+  remove.type = 'button';
+  remove.innerHTML = `${faIcon('xmark')} Retirer`;
+  remove.onclick = clearAttachedFile;
+  preview.append(name, remove);
 }
 
 window.clearAttachedFile = () => {
@@ -2984,6 +3158,7 @@ async function checkFirstRun() {
     const cfg = await db.get('settings', 'aiConfig');
     if (cfg?.value) {
       state.aiConfig = cfg.value;
+      if (!state.customTheme && cfg.value.theme) state.customTheme = cfg.value.theme;
       updateBrandName();
       return false;
     }
@@ -3009,8 +3184,47 @@ function updateBrandName() {
   if (wvLogo) wvLogo.textContent = name;
 }
 
+function getWizardTheme() {
+  return {
+    primary: document.getElementById('wizard-color-primary')?.value || '#ff1744',
+    secondary: document.getElementById('wizard-color-secondary')?.value || '#ff3b30',
+    accent: document.getElementById('wizard-color-accent')?.value || '#ff8a3d'
+  };
+}
+
+function updateWizardColorPreview() {
+  const theme = getWizardTheme();
+  const strip = document.getElementById('wizard-color-preview');
+  if (!strip) return;
+  [theme.primary, theme.secondary, theme.accent].forEach((color, i) => {
+    const swatch = strip.children[i];
+    if (swatch) {
+      swatch.style.background = color;
+      swatch.style.color = color;
+    }
+  });
+  applyCustomTheme(theme);
+}
+
+function initWizardColorControls() {
+  ['wizard-color-primary','wizard-color-secondary','wizard-color-accent'].forEach(id => {
+    const input = document.getElementById(id);
+    if (input) input.oninput = updateWizardColorPreview;
+  });
+  if (state.customTheme) {
+    const primary = document.getElementById('wizard-color-primary');
+    const secondary = document.getElementById('wizard-color-secondary');
+    const accent = document.getElementById('wizard-color-accent');
+    if (primary) primary.value = state.customTheme.primary || '#ff1744';
+    if (secondary) secondary.value = state.customTheme.secondary || '#ff3b30';
+    if (accent) accent.value = state.customTheme.accent || '#ff8a3d';
+  }
+  updateWizardColorPreview();
+}
+
 function showWizard(step = 1) {
   document.getElementById('setup-wizard-overlay').classList.add("active");
+  initWizardColorControls();
   setWizardStep(step);
 }
 
@@ -3087,8 +3301,13 @@ function initWizardEvents() {
     const name = document.getElementById('wizard-ai-name').value.trim();
     const goal = document.getElementById('wizard-ai-goal').value.trim();
     if (!name || !goal) { toast("Nom et objectif obligatoires", "error"); return; }
-    state.aiConfig = { name, goal };
+    const theme = getWizardTheme();
+    state.customTheme = theme;
+    state.aiConfig = { name, goal, theme };
     await db.put('settings', { id: 'aiConfig', value: state.aiConfig });
+    await db.put('settings', { id: 'customTheme', value: theme });
+    await db.put('settings', { id: 'theme', value: 'custom' });
+    applyTheme('custom', theme);
     updateBrandName();
     setWizardStep(3);
     await runAgentGeneration(name, goal);
@@ -3097,7 +3316,7 @@ function initWizardEvents() {
   // Finish
   document.getElementById('wizard-finish').onclick = async () => {
     hideWizard();
-    toast(`Bienvenue sur ${state.aiConfig?.name || 'VOANH'} AI !`, "success");
+    toast(`Bienvenue sur ${state.aiConfig?.name || 'Libre AI'} !`, "success");
   };
 
   // Retry
@@ -3158,7 +3377,7 @@ async function runAgentGeneration(name, goal) {
         <div class="agent-gen-card-desc">${escapeHtml((a.desc||'').slice(0,90))}</div>
       </div>
     `).join('');
-    document.getElementById('wizard-step3-title').textContent = `✓ ${agents.length} Agents Générés !`;
+    document.getElementById('wizard-step3-title').textContent = `${agents.length} Agents Générés !`;
     document.getElementById('wizard-step3-sub').textContent = `Vos agents spécialisés sont prêts. Vous pourrez les modifier à tout moment.`;
     preview.style.display = 'block';
   } catch(err) {
@@ -3267,7 +3486,7 @@ function initGenerateMoreAgents() {
       await loadAgents();
       toast(`${Math.min(10, agents.length)} nouveaux agents générés !`, "success");
     } catch(e) { toast("Erreur génération : " + e.message.slice(0,80), "error"); }
-    finally { btn.disabled = false; btn.innerHTML = '✦ GÉNÉRER + D\'AGENTS'; }
+    finally { btn.disabled = false; btn.innerHTML = `${faIcon('wand-magic-sparkles')} GÉNÉRER + D'AGENTS`; }
   };
 }
 
@@ -3290,10 +3509,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Theme
   try {
     const t = await db.get('settings', 'theme');
-    if (t) {
-      document.documentElement.dataset.theme = t.value;
-      $("#theme-select").value = t.value;
-    }
+    const custom = await db.get('settings', 'customTheme');
+    if (custom?.value) state.customTheme = custom.value;
+    applyTheme(t?.value || 'redblack', state.customTheme);
   } catch(e) {}
 
   // Models
@@ -3303,7 +3521,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const opt = document.createElement("option");
     opt.value = m.id;
     opt.textContent = m.name;
-    opt.title = `${m.desc} • ${m.tokens.toLocaleString()} max tokens${m.vision?' • 👁 Vision':''}${m.audio?' • 🎵 Audio':''}`;
+    opt.title = `${m.desc} • ${m.tokens.toLocaleString()} max tokens${m.vision?' • Vision':''}${m.audio?' • Audio':''}`;
     modelSel.appendChild(opt);
     if (agentModelPref) {
       const opt2 = document.createElement("option");
@@ -3493,11 +3711,11 @@ function bindEvents() {
     } catch(err) { console.error(err); }
   };
 
-  // Theme
-  $("#theme-select").onchange = e => {
-    document.documentElement.dataset.theme = e.target.value;
-    db.put('settings', { id:'theme', value:e.target.value }).catch(()=>{});
-  };
+	  // Theme
+	  $("#theme-select").onchange = e => {
+	    applyTheme(e.target.value);
+	    db.put('settings', { id:'theme', value:normalizeTheme(e.target.value) }).catch(()=>{});
+	  };
 
   // API Modal
   $("#open-api-modal").onclick = () => {
@@ -3616,7 +3834,7 @@ function bindEvents() {
   if ($("#btn-export")) $("#btn-export").onclick = exportData;
 
   if ($("#btn-clear-all")) $("#btn-clear-all").onclick = async () => {
-    if (!confirm("⚠ Supprimer TOUTES les données locales VOANH ? Cette action est irréversible.")) return;
+    if (!confirm("Supprimer TOUTES les données locales Libre AI ? Cette action est irréversible.")) return;
     const stores = ['chats','agents','settings','global_memory'];
     for (const s of stores) {
       const all = await db.getAll(s) || [];
@@ -3655,13 +3873,20 @@ function bindEvents() {
       const nbAgents = data.agents?.length || 0;
       const nbMems = data.global_memory?.length || 0;
       const exported = payload.exported ? `Sauvegarde du ${new Date(payload.exported).toLocaleString('fr-FR')}` : "Date inconnue";
-      $("#import-summary").innerHTML = `
-        <strong style="color:var(--neon)">✓ Fichier valide</strong><br>
-        ${exported}<br>
-        ▸ ${nbChats} conversation(s) &nbsp;|&nbsp; ${nbAgents} agent(s) &nbsp;|&nbsp; ${nbMems} souvenir(s)
-      `;
+      const summary = $("#import-summary");
+      summary.textContent = '';
+      const ok = document.createElement('strong');
+      ok.style.color = 'var(--neon)';
+      ok.textContent = 'Fichier valide';
+      summary.append(ok, document.createElement('br'), document.createTextNode(exported), document.createElement('br'),
+        document.createTextNode(`▸ ${nbChats} conversation(s) | ${nbAgents} agent(s) | ${nbMems} souvenir(s)`));
     } catch(e) {
-      $("#import-summary").innerHTML = `<span style="color:var(--danger)">⚠ Fichier invalide ou corrompu : ${e.message}</span>`;
+      const summary = $("#import-summary");
+      summary.textContent = '';
+      const err = document.createElement('span');
+      err.style.color = 'var(--danger)';
+      err.textContent = `Fichier invalide ou corrompu : ${e.message}`;
+      summary.appendChild(err);
       pendingImportFile = null;
     }
   };
@@ -3702,7 +3927,7 @@ function bindEvents() {
         await computeStats();
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '✓ VALIDER ET RESTAURER';
+        btn.innerHTML = `${faIcon('check')} VALIDER ET RESTAURER`;
       }
     };
   }
@@ -3772,9 +3997,8 @@ function bindEvents() {
     const mThemeSel = $("#theme-select-mob");
     if (mThemeSel) {
       mThemeSel.onchange = e => {
-        document.documentElement.dataset.theme = e.target.value;
-        $("#theme-select").value = e.target.value;
-        db.put('settings', { id:'theme', value:e.target.value }).catch(()=>{});
+        applyTheme(e.target.value);
+        db.put('settings', { id:'theme', value:normalizeTheme(e.target.value) }).catch(()=>{});
       };
     }
 
@@ -3820,6 +4044,5 @@ function bindEvents() {
   });
 }
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

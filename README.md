@@ -1,695 +1,172 @@
-# VOANH AI — Chatbot LLM Free Tier Mistral Évolué
+<p align="center">
+  <img src="https://img.shields.io/badge/Libre%20AI-Personal%20Mistral%20Chatbot-ff1744?style=for-the-badge&labelColor=050101" alt="Libre AI">
+</p>
 
-**VOANH AI** est une plateforme d'intelligence artificielle personnelle avancée, entièrement contenue dans **une seule page HTML**. Elle exploite la puissance des modèles **Mistral AI** via leur **Free Tier** généreux, offrant des capacités de chatbot sophistiquées avec mémoire globale, agents spécialisés auto-générés, et gestion complète des données — le tout en local, sans serveur backend.
+<p align="center">
+  <img src="https://img.shields.io/badge/HTML5-single%20file-ff3b30?style=flat-square&labelColor=111111" alt="HTML5 single file">
+  <img src="https://img.shields.io/badge/JavaScript-vanilla-ff8a3d?style=flat-square&labelColor=111111" alt="Vanilla JavaScript">
+  <img src="https://img.shields.io/badge/Mistral%20AI-API-ff1744?style=flat-square&labelColor=111111" alt="Mistral AI API">
+  <img src="https://img.shields.io/badge/IndexedDB-local%20storage-b00020?style=flat-square&labelColor=111111" alt="IndexedDB local storage">
+  <img src="https://img.shields.io/badge/backend-none-202020?style=flat-square&labelColor=111111" alt="No backend">
+  <img src="https://img.shields.io/badge/theme-red%20black-ff1744?style=flat-square&labelColor=050101" alt="Red black theme">
+</p>
 
----
+# Libre AI
 
-## 🌟 Pourquoi VOANH AI est un Chatbot LLM Évolué ?
+Libre AI est une application web locale pour discuter avec les modèles Mistral AI. Elle tient dans un seul fichier `index.html`, sans backend, sans installation npm, et stocke vos conversations, agents, paramètres et mémoires dans le navigateur.
 
-Contrairement aux chatbots basiques, VOANH AI intègre des fonctionnalités avancées directement dans son code source :
+## Fonctionnalités
 
-### 🔧 Architecture Technique Avancée
+- Application autonome en HTML, CSS et JavaScript vanilla.
+- Appels directs à l'API `https://api.mistral.ai/v1/chat/completions`.
+- Support de plusieurs modèles Mistral, dont modèles texte, code, vision et audio selon disponibilité API.
+- Mémoire globale persistante avec IndexedDB.
+- Agents spécialisés créés manuellement ou générés automatiquement avec Mistral.
+- Import/export complet des données en JSON.
+- Interface rouge/noir par défaut, avec thème personnalisable pendant la configuration initiale.
+- Icônes Font Awesome, polices Fontsource et Bootstrap servis via jsDelivr.
 
-1. **Single Page Application (SPA) Autonome**
-   - Tout le code tient dans **un seul fichier `index.html`** (≈ 3800 lignes)
-   - Aucune dépendance serveur : HTML + CSS + JavaScript vanilla
-   - Bootstrap 5.3 pour l'UI, Google Fonts pour la typographie cyberpunk
-   - IndexedDB intégré pour le stockage local persistant
+## Installation
 
-2. **Intégration Native Mistral AI**
-   - Appel direct à l'API `https://api.mistral.ai/v1/chat/completions`
-   - Support de **20+ modèles Mistral** (Omega, Zenith, Codestral, Devstral, Pixtral, Voxtral, etc.)
-   - Gestion intelligente des tokens et du contexte (jusqu'à 375K tokens)
-   - Températures adaptatives par modèle (0.42 à 1.44)
+### Usage local
 
-3. **Système de Mémoire Globale Persistante**
-   - Base de données IndexedDB (`VOANH_AI_DB`) avec 4 stores : `chats`, `agents`, `global_memory`, `settings`
-   - La mémoire n'est pas limitée au contexte de conversation : elle persiste entre les sessions
-   - Recherche sémantique simplifiée par mots-clés et tags
-   - Chaque message peut être sauvegardé manuellement dans la mémoire globale
+1. Ouvrez `index.html` dans Chrome, Firefox, Edge ou Safari.
+2. Entrez votre clé API Mistral au premier lancement.
+3. Configurez le nom, l'objectif et les couleurs de votre assistant.
 
-4. **Génération Automatique d'Agents par IA**
-   - Un agent n'est pas un simple preset : c'est une entité autonome générée par **Mistral Large**
-   - Le wizard initial utilise un prompt sophistiqué pour créer **20 agents spécialisés** adaptés à votre profil
-   - Chaque agent possède : nom, description, instructions détaillées, tags, style de réponse, température personnalisée
-   - Les agents sont stockés localement et peuvent être modifiés, dupliqués, exportés
+### Hébergement statique
 
-5. **Sécurité & Confidentialité Totales**
-   - La clé API Mistral est stockée dans un **cookie sécurisé (365 jours)** + localStorage en fallback
-   - **Aucune donnée ne transite vers des serveurs tiers** — uniquement vers `api.mistral.ai`
-   - Toutes les conversations, agents et mémoires restent sur votre navigateur
+Vous pouvez aussi héberger `index.html` sur GitHub Pages, Netlify, Vercel ou n'importe quel serveur statique.
 
----
+## Clé API Mistral
 
-## 🚀 Comment Obtenir Votre Clé API Mistral
+1. Allez sur `https://console.mistral.ai`.
+2. Créez un compte ou connectez-vous.
+3. Ouvrez la section `API Keys`.
+4. Créez une nouvelle clé, par exemple `Libre-AI-Personal`.
+5. Copiez la clé et collez-la dans Libre AI.
 
-### Étape 1 : Créer un Compte Mistral AI
+La clé est stockée localement dans un cookie et dans `localStorage` en fallback. Elle est uniquement utilisée pour appeler l'API Mistral.
 
-1. Rendez-vous sur **[console.mistral.ai](https://console.mistral.ai)**
-2. Cliquez sur **"Sign Up"** ou **"Get Started for Free"**
-3. Inscrivez-vous avec votre email ou via GitHub/Google
+## Configuration initiale
 
-### Étape 2 : Générer Votre Clé API
+Le wizard intégré comporte trois étapes :
 
-1. Une fois connecté, accédez à votre **Tableau de Bord (Dashboard)**
-2. Dans le menu latéral, cliquez sur **"API Keys"**
-3. Cliquez sur **"Create New Key"**
-4. Donnez un nom à votre clé (ex: `VOANH-Personal`)
-5. **Copiez immédiatement la clé** — elle ne sera affichée qu'une seule fois !
-   - Format : `votre_clé_commence_par_` suivi de caractères alphanumériques
+1. Saisie et validation de la clé API.
+2. Personnalisation de l'assistant : nom, objectif, couleurs primaire/secondaire/accent.
+3. Génération automatique de 20 agents spécialisés avec Mistral Large.
 
-### Étape 3 : Vérifier Vos Quotas Free Tier
+La génération d'agents peut être ignorée si vous préférez créer vos agents manuellement.
 
-Mistral offre un **Free Tier généreux** :
-- **Gratuit** : Pas de carte bancaire requise
-- **Quotas mensuels** : Suffisants pour un usage personnel intensif
-- **Modèles inclus** : Mistral Small, Medium, Large, Codestral, Pixtral, etc.
-- **Suivi en temps réel** : Consultez `console.mistral.ai → Dashboard` pour voir vos quotas restants
+## Données locales
 
-> 💡 **Astuce** : Le Free Tier Mistral est idéal pour le développement et l'usage personnel. Pour un usage professionnel intensif, passez à un plan payant.
-
----
-
-## 📦 Installation sur le Site
-
-### Méthode 1 : Hébergement Statique (Recommandé)
-
-1. **Téléchargez** le fichier `index.html`
-2. **Hébergez-le** sur n'importe quel serveur statique :
-   - **GitHub Pages** : Créez un repo, uploadez `index.html`, activez Pages
-   - **Netlify / Vercel** : Glissez-déposez le fichier
-   - **Votre propre serveur** : Upload via FTP/SFTP
-3. **Ouvrez** l'URL dans votre navigateur
-
-### Méthode 2 : Usage Local (100% Offline sauf API)
-
-1. **Enregistrez** `index.html` sur votre ordinateur
-2. **Ouvrez** le fichier directement dans Chrome, Firefox, Edge ou Safari
-3. **Configurez** votre clé API au premier lancement
-
-### Configuration Initiale (Wizard Intégré)
-
-Au premier lancement, un **wizard en 3 étapes** vous guide :
-
-1. **Étape 1** : Saisissez votre clé API Mistral
-   - La clé est validée (min. 20 caractères)
-   - Stockée dans un cookie + localStorage
-   - Statut "ONLINE" affiché immédiatement
-
-2. **Étape 2** : Personnalisez votre IA
-   - Nommez votre assistant (ex: `JARVIS`, `ATHENA`, `CODEX`)
-   - Définissez son objectif principal (ex: "Assistant de développement full-stack")
-
-3. **Étape 3** : Génération automatique des agents
-   - Mistral Large analyse votre profil
-   - **20 agents spécialisés** sont créés automatiquement
-   - Preview des agents générés avant validation
-
----
-
-## 🏠 Avantages du Local (100% Navigateur)
-
-### 🔒 Confidentialité Maximale
-- **Aucun serveur backend** : Vos données ne quittent jamais votre navigateur
-- **Clé API sécurisée** : Stockée localement, jamais transmise à des tiers
-- **Conformité RGPD** : Pas de collecte de données, pas de tracking
-
-### ⚡ Performance & Réactivité
-- **Chargement instantané** : Pas de requêtes serveur hormis l'API Mistral
-- **Interface fluide** : CSS optimisé, animations hardware-accelerated
-- **Mode offline partiel** : L'interface fonctionne sans connexion (seules les requêtes IA nécessitent internet)
-
-### 💾 Persistance des Données
-- **IndexedDB** : Base de données locale robuste (jusqu'à plusieurs Go selon le navigateur)
-- **Sauvegarde automatique** : Chaque message, agent et mémoire est persisté immédiatement
-- **Export/Import** : Sauvegardez toutes vos données dans un fichier JSON
-
-### 🛠️ Flexibilité Totale
-- **Personnalisation illimitée** : Modifiez le CSS, les prompts, les modèles
-- **Pas de dépendances** : Aucun npm, pip, ou build system requis
-- **Portable** : Copiez-collez le fichier sur une clé USB, utilisez-le partout
-
----
-
-## 🆓 Avantages du Moteur Free Tier Mistral
-
-### 🎯 Gratuité Réelle
-- **Aucune carte bancaire** requise pour commencer
-- **Quotas mensuels renouvelés** gratuitement
-- **Idéal pour** : Développement, tests, usage personnel, prototypes
-
-### 🧠 Modèles Haute Performance
-| Modèle | Force Principale | Contexte | Usage Recommandé |
-|--------|------------------|----------|------------------|
-| **Mistral Omega (Large)** | Raisonnement complexe | 4M tokens | Analyses profondes, code avancé |
-| **Mistral Zenith (Medium)** | Ratio qualité/vitesse | 375K tokens | Usage quotidien polyvalent |
-| **Codestral / Devstral** | Génération de code | 4M tokens | Développement, debugging |
-| **Pixtral** | Vision par ordinateur | 4M tokens | Analyse d'images, OCR |
-| **Voxtral** | Traitement audio | 4M tokens | Transcription, analyse sonore |
-| **Mistral Flash (Small)** | Rapidité extrême | 4M tokens | Réponses instantanées |
-
-### 📈 Évolutivité
-- **Upgrade seamless** : Passez à un plan payant sans changer de code
-- **Multi-modèles** : Switch instantané entre 20+ modèles selon la tâche
-- **Contexte étendu** : Jusqu'à 375K tokens pour analyser des documents longs
-
-### 🌍 Écosystème Open
-- **Documentation complète** : [docs.mistral.ai](https://docs.mistral.ai)
-- **SDK officiels** : Python, Node.js, TypeScript
-- **Communauté active** : Discord, GitHub, forums dédiés
-
----
-
-## 🧠 La Mémoire Globale : Votre Cerveau Numérique Persistant
-
-### Concept
-
-La **Mémoire Globale** est un système révolutionnaire qui dépasse le contexte limité des conversations. Contrairement à la mémoire temporaire d'un chat classique (qui disparaît après chaque session), la mémoire globale de VOANH AI :
-
-- **Persiste indéfiniment** dans IndexedDB
-- **Est partagée** entre toutes vos conversations
-- **Peut être consultée** à tout moment via le panneau latéral
-- **Enrichit les réponses** de l'IA en injectant du contexte pertinent
-
-### Fonctionnement Technique
+Libre AI utilise IndexedDB avec quatre stores :
 
 ```javascript
-const memory = {
-  add: async (content, tags = []) => {
-    // Crée une entrée avec id unique, timestamp, importance
-    // Stocke dans IndexedDB (store: 'global_memory')
-    // Met à jour l'état local et réaffiche la liste
-  },
-  getAll: async () => {
-    // Charge toutes les mémoires depuis IndexedDB
-  },
-  getRelevant: (query, limit = 5) => {
-    // Algorithme de scoring :
-    // - +2 points si le contenu contient le mot-clé
-    // - +1 point si un tag correspond
-    // - +1 point par niveau d'importance
-    // Retourne les top N mémoires formatées
-  }
-};
-```
-
-### Utilisation Pratique
-
-#### Ajouter une Mémoire Manuellement
-1. Cliquez sur le bouton **⬡ MÉMOIRE** en bas à droite
-2. Saisissez un fait important dans le champ input
-3. Appuyez sur **+** ou Entrée
-4. Exemple : `"L'utilisateur préfère Python pour le backend et React pour le frontend"`
-
-#### Sauvegarder une Réponse de l'IA
-1. Après une réponse pertinente, cliquez sur **⬡ MÉMO** sous le message
-2. Le contenu (tronqué à 200 caractères) est ajouté automatiquement
-3. Toast de confirmation : "Ajouté à la mémoire globale"
-
-#### Consulter la Mémoire
-- Panneau latéral droit : liste des **12 dernières mémoires**
-- Chaque entrée affiche : contenu + bouton **✕** pour suppression
-- Code couleur : violet pour les tags, cyan pour les actions
-
-### Exemple Concret
-
-**Scénario** : Vous développez une application web
-
-1. **Session 1** (Lundi) :
-   - Vous dites : "Je crée une app de e-commerce avec Next.js"
-   - Vous sauvegardez en mémoire : `"Projet: e-commerce Next.js + Stripe"`
-
-2. **Session 2** (Mercredi) :
-   - Vous demandez : "Comment intégrer le paiement ?"
-   - L'IA récupère automatiquement la mémoire : `[MEM:projet] Projet: e-commerce Next.js + Stripe`
-   - Réponse contextualisée : "Pour votre projet e-commerce Next.js, voici comment intégrer Stripe..."
-
-3. **Session 3** (Vendredi) :
-   - Panneau mémoire ouvert : vous voyez tous les faits importants
-   - Vous supprimez une mémoire obsolète avec **✕**
-   - Vous ajoutez : `"Le client veut un design dark mode cyberpunk"`
-
----
-
-## 🤖 Création Automatique d'Agents
-
-### Philosophie
-
-Un **Agent** dans VOANH AI n'est pas un simple preset de prompt. C'est une **entité autonome** avec :
-- Une **personnalité** définie
-- Un **domaine d'expertise** spécialisé
-- Des **règles comportementales** strictes
-- Un **style de réponse** personnalisé
-- Une **température** adaptée à sa tâche
-
-### Processus de Génération Automatique
-
-Lors du premier lancement (ou via le bouton **"✦ GÉNÉRER + D'AGENTS"**), le système :
-
-1. **Analyse votre profil** via le nom et l'objectif saisis
-2. **Appelle Mistral Large** avec un prompt sophistiqué :
-
-```javascript
-async function generateAgentsWithMistral(apiKey, aiName, aiGoal) {
-  const prompt = `Tu es un expert en IA et en architecture de systèmes multi-agents.
-
-L'utilisateur veut créer une IA personnelle nommée "${aiName}" avec l'objectif suivant :
-"${aiGoal}"
-
-Génère EXACTEMENT 20 agents spécialisés parfaitement adaptés à ce contexte.
-Chaque agent doit avoir une spécialité unique et complémentaire des autres.
-
-Réponds UNIQUEMENT avec un JSON valide...`;
-
-  const res = await fetch("https://api.mistral.ai/v1/chat/completions", {
-    method: "POST",
-    headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "mistral-large-2512",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.8,
-      max_tokens: 8000
-    })
-  });
-  
-  // Parse la réponse JSON et retourne les 20 agents
-}
-```
-
-3. **Parse la réponse JSON** de Mistral
-4. **Stocke chaque agent** dans IndexedDB avec un UUID unique
-5. **Affiche une preview** des 20 agents générés
-
-### Exemple de Génération
-
-**Profil Utilisateur** :
-- Nom : `DEVBOX`
-- Objectif : "Assistant de développement full-stack spécialisé en React, Node.js et DevOps"
-
-**Agents Générés (extrait)** :
-
-| Agent | Spécialité | Description |
-|-------|------------|-------------|
-| **ReactArchitect** | Frontend React | Expert en architecture React, hooks avancés, optimisation des performances |
-| **NodeGuardian** | Backend Node.js | Maître des APIs REST/GraphQL, gestion de bases de données, sécurité |
-| **DevOpsCommander** | CI/CD & Cloud | Spécialiste Docker, Kubernetes, GitHub Actions, déploiements AWS/Azure |
-| **CodeAuditor** | Review & Qualité | Analyse statique, détection de bugs, suggestions de refactoring |
-| **DBWizard** | Bases de données | SQL/NoSQL, optimisation de requêtes, modélisation de schémas |
-| **SecuritySentinel** | Cybersécurité | Audit de vulnérabilités, bonnes pratiques OWASP, chiffrement |
-| **UXOptimizer** | Expérience utilisateur | Accessibilité, performance perçue, design systems |
-| **TestMaster** | Tests & QA | Unit tests, E2E, TDD, coverage analysis |
-| ... | ... | ... (12 autres agents) |
-
-Chaque agent inclut :
-- **Instructions détaillées** (200-400 mots)
-- **Tags** pour catégorisation
-- **Style de réponse** (concis, détaillé, formel, créatif, pédagogique)
-- **Température** adaptée (0.4 pour le code, 0.8 pour la créativité)
-
----
-
-## 🎯 Utilisation des Agents
-
-### Activer un Agent
-
-1. Cliquez sur le bouton **⚙ AGENT** dans le header
-2. Dans la modale, vous voyez :
-   - **Liste des agents existants** (avec nom, description, actions)
-   - **Boutons** : Importer, Générer + d'agents
-   - **Formulaire** de création manuelle
-3. Cliquez sur un agent dans la liste pour l'**activer immédiatement**
-4. Ou sélectionnez-le via le dropdown **◈ NOM_AGENT** dans le header
-
-### Effet d'un Agent Activé
-
-Une fois activé, l'agent modifie le **prompt système** de toutes vos réponses :
-
-```javascript
-function buildSystemPrompt() {
-  let prompt = "Tu es un assistant IA utile, précis et respectueux.";
-  
-  if (state.agent) {
-    prompt += `\n\n[AGENT ACTIF: ${state.agent.name}]\n`;
-    prompt += `Description: ${state.agent.desc}\n`;
-    prompt += `Instructions spéciales:\n${state.agent.instructions}\n`;
-    if (state.agent.primer) prompt += `\nNote personnelle: ${state.agent.primer}\n`;
-    if (state.agent.forbidden) prompt += `\nInterdictions: ${state.agent.forbidden}\n`;
-  }
-  
-  // Injection de la mémoire globale pertinente
-  const lastUserMsg = state.messages.filter(m=>m.role==='user').pop()?.content || "";
-  const relevantMemories = memory.getRelevant(lastUserMsg, 5);
-  if (relevantMemories.length) {
-    prompt += "\n\n[MÉMOIRE GLOBALE PERTINENTE]\n" + relevantMemories.join('\n');
-  }
-  
-  return prompt;
-}
-```
-
-### Changer d'Agent en Cours de Conversation
-
-- **Sans perdre l'historique** : Switch instantané via le dropdown
-- **Adaptation contextuelle** : Le nouvel agent reprend le fil avec sa personnalité
-- **Exemple** :
-  - Vous discutez avec **ReactArchitect** d'un composant
-  - Vous switch sur **DevOpsCommander** pour déployer l'app
-  - Vous switch sur **CodeAuditor** pour reviewer le code
-
-### Créer un Agent Manuellement
-
-Dans la modale Agent, remplissez :
-
-1. **Nom** : Court et évocateur (ex: `BioInfoGPT`)
-2. **Description** : Spécialité en 1 phrase
-3. **Instructions** : Comportement détaillé (ex: "Réponds toujours en français, cite tes sources...")
-4. **Tags** : Mots-clés pour recherche (ex: `biologie, génomique, médecine`)
-5. **Modèle préféré** : Quel modèle utiliser par défaut avec cet agent
-6. **Primer** : Phrase d'introduction type
-7. **Avancé** :
-   - Température (0 = déterministe, 2 = très créatif)
-   - Style de réponse
-   - Interdictions (ex: "Ne jamais donner de conseils médicaux directs")
-
-### Actions sur les Agents
-
-| Action | Description |
-|--------|-------------|
-| **✎ Modifier** | Éditez nom, description, instructions, settings |
-| **⎘ Dupliquer** | Créez une copie pour itérer rapidement |
-| **⬇ Exporter** | Téléchargez l'agent en fichier JSON |
-| **✕ Supprimer** | Effacez définitivement l'agent |
-| **⬆ Importer** | Chargez un agent depuis un fichier JSON |
-
----
-
-## 📊 Utilisation des Data (Conversations, Mémoires, Agents)
-
-### Architecture de Stockage
-
-VOANH AI utilise **IndexedDB** avec 4 stores :
-
-```javascript
-const DB_NAME = "VOANH_AI_DB";
+const DB_NAME = "VOANH_AI_DB"; // nom historique conservé pour ne pas perdre les données locales existantes
 const DB_VERSION = 3;
 
-// Stores :
-// 1. 'chats' : { id, model, agentId, messages[], title, updated, fav }
-// 2. 'agents' : { id, name, desc, instructions, tags, style, temperature, primer, forbidden, created }
-// 3. 'global_memory' : { id, content, tags[], created, importance }
-// 4. 'settings' : { id, value } (ex: aiConfig, currentChatId)
+// chats: conversations et messages
+// agents: agents personnalisés
+// global_memory: mémoire globale
+// settings: thème, modèle, configuration IA, chat courant
 ```
 
-### Navigation dans les Archives
+Le nom `VOANH_AI_DB` est volontairement conservé pour assurer la compatibilité avec les anciennes données locales.
 
-1. Cliquez sur le bouton **📦 ARCHIVES** en bas à gauche
-2. Panneau latéral avec :
-   - **Barre de recherche** : Filtrer par titre ou contenu
-   - **Liste des conversations** : Triées par date, favorites en premier
-   - **Indicateurs** : 📌 favorite, ◈ agent actif, 📱 responsive
-3. Cliquez sur une conversation pour la **charger**
-4. Boutons d'action :
-   - **📌** : Basculer en favori
-   - **✕** : Supprimer la conversation
+## Mémoire globale
 
-### Exemple de Suppression
+La mémoire globale permet de conserver des informations importantes entre les conversations.
 
-#### Supprimer une Conversation
-```javascript
-window.deleteArchiveChat = async id => {
-  if (!confirm("Supprimer cette conversation ?")) return;
-  await db.delete('chats', id);
-  if (state.chatId === id) await newChat();
-  await renderArchives();
-  toast("Conversation supprimée", "success");
-};
+Elle sert à :
+
+- stocker des faits utiles ;
+- enrichir les futures réponses avec du contexte ;
+- partager une mémoire entre tous les chats ;
+- supprimer les entrées obsolètes depuis le panneau Mémoire.
+
+Les mémoires restent dans IndexedDB et ne quittent le navigateur que si elles sont incluses dans une requête envoyée à Mistral pour contextualiser une réponse.
+
+## Agents
+
+Un agent est un profil spécialisé qui modifie le prompt système.
+
+Un agent peut contenir :
+
+- nom et description ;
+- instructions détaillées ;
+- tags ;
+- style de réponse ;
+- température ;
+- modèle préféré ;
+- règles ou interdictions ;
+- primer personnel.
+
+Vous pouvez créer, modifier, dupliquer, supprimer, importer ou exporter des agents.
+
+## Import et export
+
+L'export complet crée un fichier :
+
+```text
+libre-ai-backup-YYYY-MM-DD.libre-ai.json
 ```
 
-**Action** :
-1. Ouvrez les Archives
-2. Survolez une conversation
-3. Cliquez sur **✕**
-4. Confirmation : "Supprimer cette conversation ?"
-5. Toast : "Conversation supprimée"
+Ce fichier peut contenir :
 
-#### Supprimer un Agent
-```javascript
-window.deleteAgent = async id => {
-  if (!confirm("Supprimer cet agent ?")) return;
-  await db.delete('agents', id);
-  if (state.agent?.id === id) state.agent = null;
-  await loadAgents();
-  toast("Agent supprimé", "success");
-};
+- conversations ;
+- agents ;
+- mémoire globale ;
+- paramètres ;
+- thème personnalisé.
+
+L'import accepte les fichiers `.libre-ai.json`, `.voanh.json` et `.json` pour garder la compatibilité avec les anciennes sauvegardes.
+
+Les agents individuels peuvent aussi être exportés au format :
+
+```text
+agent-NomDeLAgent.json
 ```
 
-#### Supprimer une Mémoire
-```javascript
-window.memoryDelete = async id => {
-  await db.delete('global_memory', id);
-  state.globalMemories = state.globalMemories.filter(m => m.id !== id);
-  renderMemoryList();
-};
-```
+## Confidentialité
 
-**Action** :
-1. Ouvrez le panneau Mémoire (⬡ en bas à droite)
-2. Cliquez sur **✕** à côté d'une entrée
-3. La mémoire est instantanément retirée
+- Aucun serveur backend n'est utilisé.
+- Les conversations, agents, mémoires et paramètres restent dans le navigateur.
+- Les requêtes IA sont envoyées directement à `api.mistral.ai`.
+- Les CDN utilisés servent uniquement les assets frontend : Bootstrap, Font Awesome et Fontsource via jsDelivr.
+- Aucune collecte analytics n'est incluse dans le code.
 
----
+## Personnalisation
 
-## 💾 Export et Import des Données
+Vous pouvez personnaliser :
 
-### Export Complet (Backup)
+- les couleurs dans le wizard initial ou via le thème `CUSTOM` ;
+- les modèles dans le tableau `MODELS` ;
+- les prompts dans `buildSystemPrompt()` ;
+- l'apparence via les variables CSS dans `:root`.
 
-**Fonction** : Sauvegardez **toutes** vos données dans un fichier JSON
-
-```javascript
-async function exportData() {
-  const chats = await db.getAll('chats') || [];
-  const agents = await db.getAll('agents') || [];
-  const mems = await db.getAll('global_memory') || [];
-  const settings = await db.getAll('settings') || [];
-  
-  const payload = {
-    version: "2.0",
-    exported: new Date().toISOString(),
-    source: "VOANH",
-    data: { chats, agents, global_memory: mems, settings }
-  };
-  
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `voanh-backup-${new Date().toISOString().slice(0,10)}.voanh.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-  
-  toast("Données exportées avec succès !", "success");
-}
-```
-
-**Utilisation** :
-1. Ouvrez les **Archives** (📦 en bas à gauche)
-2. Cliquez sur **⬇ EXPORTER** dans l'en-tête
-3. Téléchargement automatique : `voanh-backup-2025-01-15.voanh.json`
-4. Stockez ce fichier en sécurité (cloud, disque dur, clé USB)
-
-**Contenu du fichier** :
-```json
-{
-  "version": "2.0",
-  "exported": "2025-01-15T10:30:00.000Z",
-  "source": "VOANH",
-  "data": {
-    "chats": [...],      // Toutes vos conversations
-    "agents": [...],     // Tous vos agents personnalisés
-    "global_memory": [...], // Toute votre mémoire globale
-    "settings": [...]    // Configurations (nom IA, objectifs, etc.)
-  }
-}
-```
-
-### Import Complet (Restore)
-
-**Fonction** : Restaurez un backup précédemment exporté
-
-```javascript
-async function importData(file) {
-  const text = await file.text();
-  const payload = JSON.parse(text);
-  const data = payload.data || payload;
-  
-  let count = 0;
-  if (data.chats?.length) {
-    for (const c of data.chats) { await db.put('chats', c); count++; }
-  }
-  if (data.agents?.length) {
-    for (const a of data.agents) { await db.put('agents', a); count++; }
-  }
-  if (data.global_memory?.length) {
-    for (const m of data.global_memory) { await db.put('global_memory', m); count++; }
-  }
-  
-  await memory.getAll();
-  await loadAgents();
-  await renderArchives();
-  
-  toast(`${count} éléments importés avec succès !`, "success");
-}
-```
-
-**Utilisation** :
-1. Ouvrez les **Archives**
-2. Cliquez sur **⬆ IMPORTER** dans l'en-tête
-3. Sélectionnez un fichier `.voanh.json` ou `.json`
-4. Validation automatique et import
-5. Toast : "XX éléments importés avec succès !"
-6. **Rafraîchissement** : Conversations, agents et mémoires réapparaissent instantanément
-
-### Export/Import d'un Agent Individuel
-
-**Exporter un agent** :
-```javascript
-window.exportAgent = async (id) => {
-  const ag = await db.get('agents', id);
-  const blob = new Blob([JSON.stringify(ag, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `agent-${ag.name.replace(/\s+/g,'-')}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-  toast(`Agent "${ag.name}" exporté`, "success");
-};
-```
-
-**Importer un agent** :
-```javascript
-inp.onchange = async (e) => {
-  const file = e.target.files[0];
-  const text = await file.text();
-  const ag = JSON.parse(text);
-  if (!ag.name || !ag.desc) throw new Error("Fichier agent invalide");
-  ag.id = uuid(); 
-  ag.created = now();
-  await db.put('agents', ag);
-  await loadAgents();
-  toast(`Agent "${ag.name}" importé`, "success");
-};
-```
-
-**Utilisation** :
-1. Ouvrez la modale **⚙ AGENT**
-2. Cliquez sur **⬆ IMPORTER UN AGENT**
-3. Sélectionnez un fichier `agent-NomDeLAgent.json`
-4. L'agent apparaît dans la liste, prêt à être activé
-
-### Exemple Complet de Workflow Backup/Restore
-
-**Scénario** : Vous changez d'ordinateur
-
-1. **Sur l'ancien PC** :
-   - Ouvrez VOANH AI
-   - Archives → ⬇ EXPORTER
-   - Récupérez `voanh-backup-2025-01-15.voanh.json`
-   - Transférez-le (email, cloud, clé USB)
-
-2. **Sur le nouveau PC** :
-   - Ouvrez VOANH AI (nouvelle installation)
-   - Configurez votre clé API Mistral
-   - Archives → ⬆ IMPORTER
-   - Sélectionnez le fichier backup
-   - **Magic** : Toutes vos conversations, agents et mémoires réapparaissent !
-
----
-
-## 🎨 Design & Expérience Utilisateur
-
-### Thème Cyberpunk Futuriste
-
-- **Palette de couleurs** : Void (#020509), Cyan néon (#00e5ff), Neon vert (#00ff9d), Plasma orange (#ff6b35)
-- **Polices** : Orbitron (titres), Share Tech Mono (code), Exo 2 (texte)
-- **Effets** : Scanlines, glow néon, HUD borders, gradients futuristes
-- **Animations** : Messages qui glissent, typing indicator, pulses, transitions fluides
-
-### Responsive Design
-
-- **Desktop** : Header fixe, chat scrollable, panneaux latéraux (mémoire/archives)
-- **Mobile** : Menus collapsibles, boutons enlargis, layout adapté
-- **Breakpoints** : 768px (tablet), 480px (mobile)
-
-### Accessibilité
-
-- **Contrastes élevés** : Texte clair sur fond sombre
-- **Tailles adaptables** : Polices lisibles, boutons larges
-- **Feedback visuel** : Toasts colorés, status pills animées
-
----
-
-## 🛠️ Personnalisation Avancée
-
-### Modifier les Modèles
-
-Dans le code, éditez le tableau `MODELS` :
-
-```javascript
-const MODELS = [
-  { id:"mistral-large-2512", name:"🔥 Mistral Omega", badge:"🔥 Puissant", ... },
-  // Ajoutez/supprimez/modifiez des modèles
-];
-```
-
-### Changer le Thème
-
-Modifiez les variables CSS dans `:root` :
+Couleurs par défaut :
 
 ```css
 :root {
-  --cyan: #00e5ff;        /* Couleur principale */
-  --neon: #00ff9d;        /* Accents */
-  --plasma: #ff6b35;      /* Highlights */
-  --font-display: 'Orbitron', monospace;
-  /* ... */
+  --cyan: #ff1744;
+  --neon: #ff3b30;
+  --plasma: #ff8a3d;
 }
 ```
 
-### Ajuster les Prompts Système
+## Structure technique
 
-Éditez la fonction `buildSystemPrompt()` pour modifier le comportement par défaut de l'IA.
+- `index.html` : application complète.
+- `README.md` : documentation courte.
+- `.gitignore` : exclusions Git.
 
----
+Il n'y a pas de build, pas de serveur Node, pas de dépendances locales à installer.
 
-## 📝 Licence & Crédits
+## Crédits
 
-- **Développé par** : VOANH AI Team
-- **Moteur IA** : Mistral AI (https://mistral.ai)
-- **UI Framework** : Bootstrap 5.3
-- **Fonts** : Google Fonts (Orbitron, Share Tech Mono, Exo 2)
-- **Licence** : Usage personnel et commercial autorisé
-
----
-
-## 🆘 Support & Documentation
-
-- **Docs Mistral** : [docs.mistral.ai](https://docs.mistral.ai)
-- **Console Mistral** : [console.mistral.ai](https://console.mistral.ai)
-- **Issues & Features** : Ouvrez une issue sur le repository GitHub
-
----
-
-## 🎯 Roadmap
-
-- [ ] Support multimodal avancé (images, audio)
-- [ ] Plugins/extensions système
-- [ ] Synchronisation cloud optionnelle (chiffrée)
-- [ ] Mode collaboration multi-utilisateurs
-- [ ] Analytics locaux (stats d'usage, productivité)
-
----
-
-**VOANH AI** — *Votre Intelligence Artificielle Personnelle, Évoluée, Locale et Gratuite.*
-
-🚀 **Commencez maintenant** : Ouvrez `index.html`, configurez votre clé API Mistral, et laissez l'IA travailler pour vous !
+- Moteur IA : Mistral AI
+- UI : Bootstrap 5.3
+- Icônes : Font Awesome via jsDelivr
+- Polices : Fontsource via jsDelivr
+- Licence : MIT, voir `LICENSE`
