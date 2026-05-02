@@ -3222,6 +3222,78 @@ function initWizardColorControls() {
   updateWizardColorPreview();
 }
 
+function extractJsonPayload(text) {
+  const raw = String(text || '').trim();
+  const fenced = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  const candidate = fenced ? fenced[1].trim() : raw;
+  const firstObj = candidate.indexOf('{');
+  const lastObj = candidate.lastIndexOf('}');
+  if (firstObj !== -1 && lastObj > firstObj) return candidate.slice(firstObj, lastObj + 1);
+  const firstArr = candidate.indexOf('[');
+  const lastArr = candidate.lastIndexOf(']');
+  if (firstArr !== -1 && lastArr > firstArr) return `{"agents":${candidate.slice(firstArr, lastArr + 1)}}`;
+  return candidate;
+}
+
+function cleanJsonPayload(text) {
+  return extractJsonPayload(text)
+    .replace(/^\uFEFF/, '')
+    .replace(/,\s*([}\]])/g, '$1')
+    .trim();
+}
+
+function normalizeGeneratedAgents(parsed) {
+  const source = Array.isArray(parsed) ? parsed : parsed?.agents;
+  if (!Array.isArray(source) || !source.length) throw new Error("Réponse agents vide");
+  return source.slice(0, 20).map((ag, i) => ({
+    name: String(ag?.name || `Agent ${i + 1}`).slice(0, 48),
+    desc: String(ag?.desc || ag?.description || "Agent spécialisé Libre AI").slice(0, 140),
+    instructions: String(ag?.instructions || ag?.prompt || "Aide l'utilisateur avec précision, clarté et prudence.").slice(0, 2400),
+    tags: Array.isArray(ag?.tags) ? ag.tags.map(t => String(t).slice(0, 24)).filter(Boolean).slice(0, 6) : [],
+    style: String(ag?.style || "pedagogique").slice(0, 32),
+    temperature: Number.isFinite(Number(ag?.temperature)) ? Math.min(2, Math.max(0, Number(ag.temperature))) : 0.7
+  }));
+}
+
+function parseAgentsJson(text) {
+  const clean = cleanJsonPayload(text);
+  return normalizeGeneratedAgents(JSON.parse(clean));
+}
+
+function fallbackAgents(aiName, aiGoal) {
+  const goal = String(aiGoal || "assistant personnel").slice(0, 220);
+  const base = [
+    ["Architecte", "Structure les projets, clarifie les priorités et propose des plans d'action."],
+    ["Code", "Aide au développement, au debugging, aux revues et aux choix techniques."],
+    ["Recherche", "Synthétise les informations, compare les options et formule des conclusions."],
+    ["Rédaction", "Rédige, reformule, corrige et adapte le ton des contenus."],
+    ["Analyse", "Décompose les problèmes complexes et identifie les risques."],
+    ["Produit", "Transforme les idées en fonctionnalités, roadmaps et spécifications."],
+    ["Sécurité", "Repère les risques de sécurité et propose des pratiques prudentes."],
+    ["Données", "Aide à organiser, nettoyer, interpréter et présenter des données."],
+    ["Design", "Améliore l'ergonomie, la lisibilité et la cohérence visuelle."],
+    ["Automatisation", "Crée des workflows, scripts et procédures répétables."],
+    ["Apprentissage", "Explique les concepts et construit des parcours pédagogiques."],
+    ["Stratégie", "Aide à choisir entre plusieurs directions avec critères clairs."],
+    ["Qualité", "Prépare tests, checklists et contrôles avant livraison."],
+    ["Documentation", "Produit README, guides, notes techniques et modes d'emploi."],
+    ["Support", "Diagnostique les blocages utilisateur et propose des résolutions."],
+    ["Créatif", "Génère des idées, variantes, noms, angles et concepts."],
+    ["Finance", "Structure budgets, estimations et arbitrages non financiers personnalisés."],
+    ["Organisation", "Planifie les tâches, échéances et routines de travail."],
+    ["Communication", "Prépare messages, présentations et réponses professionnelles."],
+    ["Synthèse", "Résume les longues discussions et extrait les décisions."]
+  ];
+  return base.map(([role, desc], i) => ({
+    name: `${String(aiName || 'Libre').replace(/\s+/g, '').slice(0, 12)}${role}`,
+    desc,
+    instructions: `Tu es l'agent ${role} de Libre AI. Objectif utilisateur: ${goal}. Réponds en français par défaut, sois précis, utile, structuré, et signale clairement les incertitudes. Adapte tes conseils au contexte fourni et propose des étapes concrètes.`,
+    tags: [role.toLowerCase(), "libre-ai"],
+    style: i % 3 === 0 ? "detaille" : "pedagogique",
+    temperature: role === "Créatif" ? 0.9 : 0.6
+  }));
+}
+
 function showWizard(step = 1) {
   document.getElementById('setup-wizard-overlay').classList.add("active");
   initWizardColorControls();
@@ -3238,6 +3310,44 @@ function setWizardStep(n) {
   if (s) s.classList.add('active');
 }
 
+async function repairAgentsJsonWithMistral(apiKey, brokenJson) {
+  const repairPrompt = `Répare ce JSON pour qu'il respecte strictement ce schéma:
+{"agents":[{"name":"string","desc":"string","instructions":"string","tags":["string"],"style":"concis|detaille|formel|creatif|pedagogique","temperature":0.7}]}
+
+Contraintes:
+- Réponds uniquement avec du JSON valide.
+- Ne mets pas de markdown.
+- Échappe toutes les guillemets internes.
+- Conserve autant d'agents que possible.
+
+JSON à réparer:
+${String(brokenJson || '').slice(0, 24000)}`;
+
+  const payload = {
+    model: "mistral-large-2512",
+    messages: [{ role: "user", content: repairPrompt }],
+    temperature: 0,
+    max_tokens: 8000,
+    response_format: { type: "json_object" }
+  };
+  let res = await fetch("https://api.mistral.ai/v1/chat/completions", {
+    method: "POST",
+    headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok && res.status === 400) {
+    delete payload.response_format;
+    res = await fetch("https://api.mistral.ai/v1/chat/completions", {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+  }
+  if (!res.ok) throw new Error("Réparation JSON impossible");
+  const data = await res.json();
+  return parseAgentsJson(data.choices?.[0]?.message?.content || "");
+}
+
 async function generateAgentsWithMistral(apiKey, aiName, aiGoal) {
   const prompt = `Tu es un expert en IA et en architecture de systèmes multi-agents.
 
@@ -3247,7 +3357,14 @@ L'utilisateur veut créer une IA personnelle nommée "${aiName}" avec l'objectif
 Génère EXACTEMENT 20 agents spécialisés parfaitement adaptés à ce contexte.
 Chaque agent doit avoir une spécialité unique et complémentaire des autres.
 
-Réponds UNIQUEMENT avec un JSON valide, sans markdown, sans texte avant ou après :
+Contraintes impératives:
+- Réponds UNIQUEMENT avec un JSON valide, sans markdown, sans texte avant ou après.
+- Utilise seulement des chaînes JSON simples.
+- Échappe les guillemets internes.
+- Évite les retours ligne dans les valeurs.
+- Les instructions doivent rester entre 700 et 1200 caractères par agent.
+
+Schéma exact:
 {
   "agents": [
     {
@@ -3261,24 +3378,42 @@ Réponds UNIQUEMENT avec un JSON valide, sans markdown, sans texte avant ou apr�
   ]
 }`;
 
-  const res = await fetch("https://api.mistral.ai/v1/chat/completions", {
+  const payload = {
+    model: "mistral-large-2512",
+    messages: [{ role: "user", content: prompt }],
+    temperature: 0.8,
+    max_tokens: 8000,
+    response_format: { type: "json_object" }
+  };
+  let res = await fetch("https://api.mistral.ai/v1/chat/completions", {
     method: "POST",
     headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "mistral-large-2512",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.8,
-      max_tokens: 8000
-    })
+    body: JSON.stringify(payload)
   });
+  if (!res.ok && res.status === 400) {
+    delete payload.response_format;
+    res = await fetch("https://api.mistral.ai/v1/chat/completions", {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+  }
 
   if (!res.ok) throw new Error("API Mistral : " + res.status);
   const data = await res.json();
   const text = data.choices?.[0]?.message?.content || "";
-  const clean = text.replace(/```json|```/g, '').trim();
-  const parsed = JSON.parse(clean);
-  if (!parsed.agents?.length) throw new Error("Réponse invalide");
-  return parsed.agents;
+  try {
+    return parseAgentsJson(text);
+  } catch(parseError) {
+    console.warn("Réponse agents JSON invalide, tentative de réparation:", parseError);
+    try {
+      return await repairAgentsJsonWithMistral(apiKey, text);
+    } catch(repairError) {
+      console.warn("Réparation JSON échouée, agents locaux de secours:", repairError);
+      toast("Réponse Mistral invalide : agents de secours créés localement", "info");
+      return fallbackAgents(aiName, aiGoal);
+    }
+  }
 }
 
 function initWizardEvents() {
