@@ -19,7 +19,9 @@ Libre AI est une application web locale pour discuter avec les modèles Mistral 
 
 - Application autonome en HTML, CSS et JavaScript vanilla.
 - Appels directs à l'API `https://api.mistral.ai/v1/chat/completions`.
+- Dictée vocale via l'API Mistral `audio/transcriptions` avec `voxtral-mini-latest`.
 - Support de plusieurs modèles Mistral, dont modèles texte, code, vision et audio selon disponibilité API.
+- Affichage Markdown des réponses : titres, listes, gras, code, citations et liens.
 - Mémoire globale persistante avec IndexedDB.
 - Agents spécialisés créés manuellement ou générés automatiquement avec Mistral.
 - Import/export complet des données en JSON.
@@ -47,6 +49,25 @@ Vous pouvez aussi héberger `index.html` sur GitHub Pages, Netlify, Vercel ou n'
 5. Copiez la clé et collez-la dans Libre AI.
 
 La clé est stockée localement dans un cookie et dans `localStorage` en fallback. Elle est uniquement utilisée pour appeler l'API Mistral.
+
+## Dictée vocale
+
+Le bouton micro enregistre votre voix dans le navigateur avec `MediaRecorder`, puis envoie l'audio à l'endpoint Mistral :
+
+```text
+https://api.mistral.ai/v1/audio/transcriptions
+```
+
+La transcription utilise le modèle `voxtral-mini-latest` et insère le texte obtenu directement dans la zone de saisie.
+
+Utilisation :
+
+1. Cliquez sur le bouton micro.
+2. Autorisez l'accès au microphone si le navigateur le demande.
+3. Parlez.
+4. Recliquez sur le bouton pour arrêter l'enregistrement et lancer la transcription.
+
+La dictée nécessite une clé API Mistral configurée. Elle fonctionne sans le service `SpeechRecognition` du navigateur, ce qui améliore la compatibilité avec Firefox et évite les erreurs réseau du moteur vocal natif.
 
 ## Configuration initiale
 
@@ -132,7 +153,7 @@ agent-NomDeLAgent.json
 
 - Aucun serveur backend n'est utilisé.
 - Les conversations, agents, mémoires et paramètres restent dans le navigateur.
-- Les requêtes IA sont envoyées directement à `api.mistral.ai`.
+- Les requêtes IA et les fichiers audio de dictée sont envoyés directement à `api.mistral.ai`.
 - Les CDN utilisés servent uniquement les assets frontend : Bootstrap, Font Awesome et Fontsource via jsDelivr.
 - Aucune collecte analytics n'est incluse dans le code.
 

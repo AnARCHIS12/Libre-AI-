@@ -340,6 +340,73 @@ body::before {
   word-wrap: break-word;
   font-size: 14px;
 }
+.message-content.markdown {
+  white-space: normal;
+  line-height: 1.55;
+}
+.message-content.markdown > :first-child { margin-top: 0; }
+.message-content.markdown > :last-child { margin-bottom: 0; }
+.message-content.markdown h2,
+.message-content.markdown h3,
+.message-content.markdown h4,
+.message-content.markdown h5 {
+  color: var(--text-bright);
+  font-family: var(--font-body);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.25;
+  margin: 14px 0 8px;
+}
+.message-content.markdown h2 { font-size: 18px; }
+.message-content.markdown h3 { font-size: 16px; }
+.message-content.markdown h4,
+.message-content.markdown h5 { font-size: 15px; }
+.message-content.markdown p { margin: 0 0 10px; }
+.message-content.markdown ul,
+.message-content.markdown ol {
+  margin: 6px 0 12px 20px;
+  padding: 0;
+}
+.message-content.markdown li { margin: 4px 0; }
+.message-content.markdown strong { color: var(--text-bright); font-weight: 700; }
+.message-content.markdown em { color: var(--text-bright); }
+.message-content.markdown a {
+  color: var(--cyan);
+  text-decoration: underline;
+  text-decoration-color: var(--cyan-dim);
+  text-underline-offset: 3px;
+}
+.message-content.markdown code {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--wire);
+  border-radius: 4px;
+  color: var(--text-code);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  padding: 1px 4px;
+}
+.message-content.markdown pre {
+  background: rgba(0,0,0,0.22);
+  border: 1px solid var(--wire);
+  border-radius: var(--r);
+  margin: 10px 0 12px;
+  overflow-x: auto;
+  padding: 10px 12px;
+}
+.message-content.markdown pre code {
+  background: none;
+  border: 0;
+  color: var(--text);
+  display: block;
+  padding: 0;
+  white-space: pre;
+}
+.message-content.markdown blockquote {
+  border-left: 2px solid var(--cyan);
+  color: var(--text-bright);
+  margin: 10px 0;
+  padding: 4px 0 4px 12px;
+}
 
 .msg-meta {
   font-family: var(--font-mono);
@@ -648,9 +715,10 @@ body::before {
 .msg-action-btn:hover { border-color: var(--cyan); color: var(--cyan); }
 
 /* ═══ VOICE BUTTON ═══ */
-#voice-btn { background: var(--hull); border: var(--hud-border); color: var(--text-dim); font-size: 16px; width: 46px; height: 46px; border-radius: var(--r-lg); cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; flex-shrink: 0; align-self: flex-end; }
+#voice-btn { background: var(--hull); border: var(--hud-border); color: var(--text-dim); font-size: 16px; width: 46px; height: 46px; border-radius: var(--r-lg); cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; flex-shrink: 0; align-self: flex-end; position: relative; }
 #voice-btn:hover { border-color: var(--cyan); color: var(--cyan); }
 #voice-btn.recording { border-color: var(--danger); color: var(--danger); animation: pulse-border 1s infinite; background: rgba(255,51,102,0.1); }
+#voice-btn.recording::after { content: ''; position: absolute; top: 8px; right: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--danger); box-shadow: 0 0 10px var(--danger); }
 @keyframes pulse-border { 0%,100%{box-shadow:0 0 0 0 rgba(255,51,102,0.4)}50%{box-shadow:0 0 0 6px rgba(255,51,102,0)} }
 
 /* ═══ SCROLL TO BOTTOM ═══ */
@@ -1663,7 +1731,7 @@ body::before {
 
 <!-- ═══════════════════ INPUT ═══════════════════ -->
 <div id="input-area" style="position:relative">
-  <button id="voice-btn" title="Dictée vocale"><i class="fa-solid fa-microphone" aria-hidden="true"></i></button>
+  <button id="voice-btn" type="button" title="Dictée vocale" aria-label="Dictée vocale" aria-pressed="false"><i class="fa-solid fa-microphone" aria-hidden="true"></i></button>
   <button id="file-upload-btn" title="Joindre un fichier/image/audio" style="background:var(--hull);border:var(--hud-border);color:var(--text-dim);font-size:16px;width:46px;height:46px;border-radius:var(--r-lg);cursor:pointer;transition:var(--transition);display:flex;align-items:center;justify-content:center;flex-shrink:0;align-self:flex-end"><i class="fa-solid fa-paperclip" aria-hidden="true"></i></button>
   <input type="file" id="file-input" accept="image/*,audio/*,.pdf" style="display:none">
   <textarea id="user-input" placeholder="Transmettez votre message… (Entrée pour envoyer, Maj+Entrée pour nouvelle ligne)" rows="1"></textarea>
@@ -2213,10 +2281,12 @@ const $$ = s => document.querySelectorAll(s);
 const uuid = () => crypto.randomUUID();
 const now = () => Date.now();
 
-const escapeHtml = t => (t||'')
+const escapeText = t => String(t ?? '')
   .replace(/&/g,"&amp;")
   .replace(/</g,"&lt;")
-  .replace(/>/g,"&gt;")
+  .replace(/>/g,"&gt;");
+
+const escapeHtml = t => escapeText(t)
   .replace(/\n/g,"<br>");
 
 const escapeAttr = t => escapeHtml(String(t ?? ''))
@@ -2235,6 +2305,109 @@ const safeImageSrc = src => {
 };
 
 const faIcon = (name, label = '') => `<i class="fa-solid fa-${name}" aria-hidden="true"></i>${label ? ' ' + label : ''}`;
+
+function renderInlineMarkdown(text) {
+  let html = escapeText(text);
+  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+  html = html.replace(/\*\*([^*\n][\s\S]*?[^*\n])\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/__([^_\n][\s\S]*?[^_\n])__/g, '<strong>$1</strong>');
+  html = html.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
+  html = html.replace(/_([^_\n]+)_/g, '<em>$1</em>');
+  html = html.replace(/\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+  html = html.replace(/(^|[\s(])(https?:\/\/[^\s<]+[^<.,;:\s)])/g, '$1<a href="$2" target="_blank" rel="noopener noreferrer">$2</a>');
+  return html;
+}
+
+function renderMarkdown(text) {
+  const lines = String(text ?? '').replace(/\r\n?/g, '\n').split('\n');
+  const html = [];
+  let paragraph = [];
+  let listType = null;
+  let inCode = false;
+  let codeLines = [];
+  let codeLang = '';
+
+  const closeParagraph = () => {
+    if (!paragraph.length) return;
+    html.push(`<p>${paragraph.map(renderInlineMarkdown).join('<br>')}</p>`);
+    paragraph = [];
+  };
+  const closeList = () => {
+    if (!listType) return;
+    html.push(`</${listType}>`);
+    listType = null;
+  };
+  const closeCode = () => {
+    html.push(`<pre><code${codeLang ? ` class="language-${escapeAttr(codeLang)}"` : ''}>${escapeText(codeLines.join('\n'))}</code></pre>`);
+    inCode = false;
+    codeLines = [];
+    codeLang = '';
+  };
+
+  lines.forEach(line => {
+    const fence = line.match(/^```([A-Za-z0-9_-]+)?\s*$/);
+    if (fence) {
+      if (inCode) {
+        closeCode();
+      } else {
+        closeParagraph();
+        closeList();
+        inCode = true;
+        codeLang = fence[1] || '';
+      }
+      return;
+    }
+    if (inCode) {
+      codeLines.push(line);
+      return;
+    }
+
+    if (!line.trim()) {
+      closeParagraph();
+      closeList();
+      return;
+    }
+
+    const heading = line.match(/^(#{1,4})\s+(.+)$/);
+    if (heading) {
+      closeParagraph();
+      closeList();
+      const level = heading[1].length + 1;
+      html.push(`<h${level}>${renderInlineMarkdown(heading[2].trim())}</h${level}>`);
+      return;
+    }
+
+    const quote = line.match(/^>\s?(.+)$/);
+    if (quote) {
+      closeParagraph();
+      closeList();
+      html.push(`<blockquote>${renderInlineMarkdown(quote[1])}</blockquote>`);
+      return;
+    }
+
+    const unordered = line.match(/^\s*[-*]\s+(.+)$/);
+    const ordered = line.match(/^\s*\d+[.)]\s+(.+)$/);
+    if (unordered || ordered) {
+      closeParagraph();
+      const type = unordered ? 'ul' : 'ol';
+      if (listType !== type) {
+        closeList();
+        listType = type;
+        html.push(`<${type}>`);
+      }
+      html.push(`<li>${renderInlineMarkdown((unordered || ordered)[1])}</li>`);
+      return;
+    }
+
+    closeList();
+    paragraph.push(line);
+  });
+
+  if (inCode) closeCode();
+  closeParagraph();
+  closeList();
+  return html.join('');
+}
 
 const normalizeTheme = theme => theme === 'cyber' ? 'redblack' : (theme || 'redblack');
 const hexToRgb = hex => {
@@ -2489,7 +2662,7 @@ function renderMessages() {
     div.innerHTML = `
       <div class="msg-label">${escapeHtml(label)}</div>
       ${imgHtml}${audioHtml}
-      <div class="message-content" id="mc-${msgDomId}">${escapeHtml(m.content || '')}</div>
+      <div class="message-content markdown" id="mc-${msgDomId}">${renderMarkdown(m.content || '')}</div>
       <div class="msg-meta">
         <span>${new Date(m.ts).toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit',second:'2-digit'})}</span>
         ${memTags}
@@ -3787,29 +3960,151 @@ function bindEvents() {
     scrollBottomBtn.onclick = () => { chatContainer.scrollTop = chatContainer.scrollHeight; };
   }
 
-  // Voice dictation
+  // Voice dictation via Mistral Voxtral transcription API
   const voiceBtn = $("#voice-btn");
-  if (voiceBtn && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SR();
-    recognition.lang = 'fr-FR'; recognition.continuous = false; recognition.interimResults = false;
-    let isRecording = false;
-    voiceBtn.onclick = () => {
-      if (isRecording) { recognition.stop(); return; }
-      recognition.start();
-      isRecording = true;
-      voiceBtn.classList.add("recording");
-      voiceBtn.title = "Arrêter la dictée";
+  if (voiceBtn && navigator.mediaDevices?.getUserMedia && window.MediaRecorder) {
+    let mediaRecorder = null;
+    let mediaStream = null;
+    let audioChunks = [];
+    let isRecordingAudio = false;
+
+    const setVoiceState = stateName => {
+      const recording = stateName === "recording";
+      const transcribing = stateName === "transcribing";
+      isRecordingAudio = recording;
+      voiceBtn.disabled = transcribing;
+      voiceBtn.classList.toggle("recording", recording);
+      voiceBtn.setAttribute("aria-pressed", recording ? "true" : "false");
+      voiceBtn.title = recording ? "Arrêter et transcrire" : transcribing ? "Transcription en cours" : "Dictée vocale API";
+      voiceBtn.setAttribute("aria-label", voiceBtn.title);
+      voiceBtn.innerHTML = transcribing ? '<span class="spin-ring"></span>' : recording ? faIcon('stop') : faIcon('microphone');
     };
-    recognition.onresult = e => {
-      const transcript = Array.from(e.results).map(r=>r[0].transcript).join('');
+
+    const getAudioMimeType = () => {
+      const choices = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4'];
+      return choices.find(type => MediaRecorder.isTypeSupported(type)) || '';
+    };
+
+    const audioExtensionFor = type => {
+      if (String(type || '').includes('mp4')) return 'm4a';
+      if (String(type || '').includes('ogg')) return 'ogg';
+      return 'webm';
+    };
+
+    const insertTextAtCursor = text => {
+      const clean = String(text || '').trim();
+      if (!clean) return;
       const inp = $("#user-input");
-      inp.value += (inp.value ? ' ' : '') + transcript;
+      const start = inp.selectionStart ?? inp.value.length;
+      const end = inp.selectionEnd ?? inp.value.length;
+      const before = inp.value.slice(0, start);
+      const after = inp.value.slice(end);
+      const needsSpaceBefore = before && !/\s$/.test(before);
+      const needsSpaceAfter = after && !/^\s/.test(after);
+      const inserted = `${needsSpaceBefore ? ' ' : ''}${clean}${needsSpaceAfter ? ' ' : ''}`;
+      inp.value = before + inserted + after;
+      const cursor = before.length + inserted.length;
+      inp.selectionStart = inp.selectionEnd = cursor;
       autoResizeTextarea();
+      inp.dispatchEvent(new Event('input', { bubbles: true }));
+      inp.focus();
     };
-    recognition.onend = () => { isRecording = false; voiceBtn.classList.remove("recording"); voiceBtn.title = "Dictée vocale"; };
-    recognition.onerror = () => { isRecording = false; voiceBtn.classList.remove("recording"); toast("Dictée vocale indisponible", "error"); };
+
+    const transcribeWithMistral = async blob => {
+      if (!state.apiKey) {
+        setVoiceState("idle");
+        toast("Configurez votre clé API Mistral d'abord", "error");
+        $("#api-modal").classList.add("active");
+        return;
+      }
+      if (!blob || blob.size < 512) {
+        setVoiceState("idle");
+        toast("Aucun audio détecté", "error");
+        return;
+      }
+
+      setVoiceState("transcribing");
+      const form = new FormData();
+      form.append("model", "voxtral-mini-latest");
+      form.append("language", "fr");
+      form.append("file", blob, `dictation-${Date.now()}.${audioExtensionFor(blob.type)}`);
+
+      try {
+        console.info("[Libre AI dictation API] upload", { size: blob.size, type: blob.type });
+        const res = await fetch("https://api.mistral.ai/v1/audio/transcriptions", {
+          method: "POST",
+          headers: { "Authorization": `Bearer ${state.apiKey}` },
+          body: form
+        });
+        const raw = await res.text();
+        let data = {};
+        try { data = raw ? JSON.parse(raw) : {}; } catch(e) {}
+        if (!res.ok) {
+          const message = data.message || data.error?.message || raw || `HTTP ${res.status}`;
+          throw new Error(message);
+        }
+        const transcript = data.text || data.transcript || data.output_text || "";
+        if (!transcript.trim()) throw new Error("Transcription vide");
+        insertTextAtCursor(transcript);
+        toast("Dictée transcrite", "success");
+      } catch(e) {
+        console.error("[Libre AI dictation API] error", e);
+        toast("Erreur transcription : " + e.message.slice(0, 120), "error");
+      } finally {
+        setVoiceState("idle");
+      }
+    };
+
+    const stopTracks = () => {
+      if (mediaStream) mediaStream.getTracks().forEach(track => track.stop());
+      mediaStream = null;
+    };
+
+    const startApiDictation = async () => {
+      if (!state.apiKey) {
+        toast("Configurez votre clé API Mistral d'abord", "error");
+        $("#api-modal").classList.add("active");
+        return;
+      }
+      try {
+        audioChunks = [];
+        mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const mimeType = getAudioMimeType();
+        mediaRecorder = new MediaRecorder(mediaStream, mimeType ? { mimeType } : undefined);
+        mediaRecorder.ondataavailable = e => {
+          if (e.data?.size) audioChunks.push(e.data);
+        };
+        mediaRecorder.onstop = () => {
+          const type = mediaRecorder?.mimeType || mimeType || 'audio/webm';
+          const blob = new Blob(audioChunks, { type });
+          stopTracks();
+          transcribeWithMistral(blob);
+        };
+        mediaRecorder.start();
+        setVoiceState("recording");
+        toast("Enregistrement API actif : recliquez pour transcrire", "info");
+      } catch(e) {
+        stopTracks();
+        setVoiceState("idle");
+        toast(e.name === "NotAllowedError" ? "Autorisez le micro pour utiliser la dictée" : "Micro indisponible : " + e.message, "error");
+      }
+    };
+
+    const stopApiDictation = () => {
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+      } else {
+        stopTracks();
+        setVoiceState("idle");
+      }
+    };
+
+    voiceBtn.onclick = () => {
+      if (isRecordingAudio) stopApiDictation();
+      else startApiDictation();
+    };
   } else if (voiceBtn) {
+    console.warn("[Libre AI dictation API] MediaRecorder non supporté par ce navigateur");
     voiceBtn.style.display = "none";
   }
 
