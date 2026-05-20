@@ -7,9 +7,18 @@
   <img src="https://img.shields.io/badge/JavaScript-vanilla-ff8a3d?style=flat-square&labelColor=111111" alt="Vanilla JavaScript">
   <img src="https://img.shields.io/badge/Mistral%20AI-API-ff1744?style=flat-square&labelColor=111111" alt="Mistral AI API">
   <img src="https://img.shields.io/badge/IndexedDB-local%20storage-b00020?style=flat-square&labelColor=111111" alt="IndexedDB local storage">
+  <img src="https://img.shields.io/badge/PWA-single%20file-ff1744?style=flat-square&labelColor=111111" alt="Single file PWA">
   <img src="https://img.shields.io/badge/backend-none-202020?style=flat-square&labelColor=111111" alt="No backend">
   <img src="https://img.shields.io/badge/theme-red%20black-ff1744?style=flat-square&labelColor=050101" alt="Red black theme">
 </p>
+
+<div align="center">
+  <strong>Crédit original</strong><br>
+  <code>Libre AI</code> est créé à partir de <code>VOANH AI</code>, projet original de <strong>LaurentVoanh</strong>.<br>
+  Merci à lui pour ce projet génial.
+</div>
+
+<br>
 
 # Libre AI
 
@@ -26,6 +35,8 @@ Libre AI est une application web locale pour discuter avec les modèles Mistral 
 - Agents spécialisés créés manuellement ou générés automatiquement avec Mistral.
 - Import/export complet des données en JSON.
 - Interface rouge/noir par défaut, avec thème personnalisable pendant la configuration initiale.
+- Interface mobile renforcée : menu compact, zones tactiles, safe-area, modales et wizard adaptés aux petits écrans.
+- Mode PWA single-file : manifest, icônes et bouton d'installation générés directement depuis `index.html`.
 - Icônes Font Awesome, polices Fontsource et Bootstrap servis via jsDelivr.
 
 ## Installation
@@ -35,10 +46,25 @@ Libre AI est une application web locale pour discuter avec les modèles Mistral 
 1. Ouvrez `index.html` dans Chrome, Firefox, Edge ou Safari.
 2. Entrez votre clé API Mistral au premier lancement.
 3. Configurez le nom, l'objectif et les couleurs de votre assistant.
+4. Choisissez un profil d'objectif si vous voulez démarrer plus vite.
 
 ### Hébergement statique
 
 Vous pouvez aussi héberger `index.html` sur GitHub Pages, Netlify, Vercel ou n'importe quel serveur statique.
+
+### Installation mobile / PWA
+
+Libre AI reste un seul fichier `index.html`, mais il inclut une enveloppe PWA intégrée :
+
+- manifest généré en `data:` ;
+- icône SVG intégrée ;
+- métas Android et iOS ;
+- bouton `INSTALLER` quand le navigateur déclenche l'installation ;
+- aide iPhone/iPad pour `Partager` puis `Ajouter à l'écran d'accueil`.
+
+Pour obtenir le meilleur comportement d'installation, ouvrez l'application via `https://...` ou `localhost`. L'ouverture directe en `file://` peut fonctionner pour tester l'interface, mais les navigateurs limitent souvent l'installation PWA dans ce mode.
+
+Limite volontaire : comme tout reste dans `index.html`, il n'y a pas de fichier `sw.js`. L'application est donc installable selon navigateur, mais pas pensée comme PWA offline complète.
 
 ## Clé API Mistral
 
@@ -74,10 +100,19 @@ La dictée nécessite une clé API Mistral configurée. Elle fonctionne sans le 
 Le wizard intégré comporte trois étapes :
 
 1. Saisie et validation de la clé API.
-2. Personnalisation de l'assistant : nom, objectif, couleurs primaire/secondaire/accent.
-3. Génération automatique de 20 agents spécialisés avec Mistral Large.
+2. Personnalisation de l'assistant : nom, objectif, profils rapides, couleurs primaire/secondaire/accent.
+3. Génération automatique de 20 agents spécialisés avec un modèle Mistral rapide.
 
 La génération d'agents peut être ignorée si vous préférez créer vos agents manuellement.
+
+Les profils rapides aident les débutants à remplir l'objectif sans rédiger un long prompt :
+
+- Débutant polyvalent ;
+- Code et projets ;
+- Études ;
+- Planification.
+
+La génération conserve le même résultat attendu, soit 20 agents IA, mais demande des instructions plus compactes afin de réduire le temps de réponse et les risques de JSON trop volumineux.
 
 ## Données locales
 
@@ -182,10 +217,11 @@ Couleurs par défaut :
 - `README.md` : documentation courte.
 - `.gitignore` : exclusions Git.
 
-Il n'y a pas de build, pas de serveur Node, pas de dépendances locales à installer.
+Il n'y a pas de build, pas de serveur Node, pas de dépendances locales à installer. Le manifest PWA et l'icône sont générés dynamiquement par `index.html`, donc aucun fichier `manifest.json` ou `sw.js` n'est nécessaire.
 
 ## Crédits
 
+- Libre AI est créé à partir de `VOANH AI`, projet original de LaurentVoanh. Merci à lui pour ce projet génial.
 - Moteur IA : Mistral AI
 - UI : Bootstrap 5.3
 - Icônes : Font Awesome via jsDelivr

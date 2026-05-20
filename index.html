@@ -2,9 +2,18 @@
 <html lang="fr" data-theme="redblack">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src https://api.mistral.ai; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src https://cdn.jsdelivr.net; img-src 'self' data:; script-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src https://api.mistral.ai; manifest-src 'self' data:; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src https://cdn.jsdelivr.net; img-src 'self' data:; script-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>Libre AI — Votre Intelligence Artificielle Personnelle</title>
+<meta name="application-name" content="Libre AI">
+<meta name="theme-color" content="#050101">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Libre AI">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" id="pwa-manifest">
+<link rel="icon" id="pwa-favicon" type="image/svg+xml">
+<link rel="apple-touch-icon" id="pwa-apple-icon">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/@fontsource/orbitron@5/400.css" rel="stylesheet">
@@ -68,7 +77,9 @@
 /* GLOBAL */
 html, body {
   height: 100%;
+  width: 100%;
   overflow: hidden;
+  overscroll-behavior: none;
 }
 body {
   font-family: var(--font-body);
@@ -76,6 +87,7 @@ body {
   color: var(--text);
   display: flex;
   flex-direction: column;
+  min-width: 0;
   background-image:
     var(--scanline),
     radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255,23,68,0.11) 0%, transparent 60%),
@@ -226,6 +238,8 @@ body::before {
 .hud-btn.danger { border-color: rgba(255,51,102,0.4); color: var(--danger); }
 .hud-btn.danger:hover { box-shadow: 0 0 10px rgba(255,51,102,0.3); }
 .hud-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.pwa-install-btn { display: none; }
+.pwa-install-btn.ready { display: inline-flex; }
 
 .status-pill {
   display: inline-flex;
@@ -1246,30 +1260,298 @@ body::before {
 
 /* ═══ RESPONSIVE ═══ */
 @media (max-width: 768px) {
-  #libre-header { padding: 0 12px; gap: 10px; }
-  .brand-name { font-size: 15px; letter-spacing: 3px; }
+  html, body { height: 100dvh; }
+  #libre-header {
+    height: 56px;
+    padding: 0 max(12px, env(safe-area-inset-right)) 0 max(12px, env(safe-area-inset-left));
+    gap: 8px;
+  }
+  .brand { min-width: 0; flex: 1; }
+  .brand-logo, .brand-logo svg { width: 32px; height: 32px; }
+  .brand-name {
+    font-size: clamp(13px, 4.2vw, 15px);
+    letter-spacing: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: calc(100vw - 86px);
+  }
   .brand-sub { display: none; }
   .header-controls { display: none; }
   .header-right { display: none; }
-  #burger-btn { display: flex; }
-  #chat-container { padding: 14px 12px; }
-  .message { max-width: 95%; }
-  #memory-panel { width: calc(100% - 90px); right: 16px; bottom: 110px; left: auto; }
-  #archives-panel { width: calc(100% - 32px); left: 16px; bottom: 110px; max-height: 65vh; }
-  .modal-overlay { padding: 0; align-items: flex-end; }
-  .modal-box { max-height: 92dvh; border-radius: var(--r-lg) var(--r-lg) 0 0; max-width: 100%; }
+  #burger-btn {
+    display: flex;
+    height: 44px;
+    width: 44px;
+    margin-left: auto;
+  }
+  #mobile-menu {
+    top: 56px;
+    max-height: calc(100dvh - 56px);
+    overflow-y: auto;
+    padding: 12px max(12px, env(safe-area-inset-right)) 12px max(12px, env(safe-area-inset-left));
+  }
+  .mobile-row {
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+  .mobile-row .hud-select,
+  .mobile-row .hud-btn,
+  .mobile-row .status-pill {
+    min-height: 44px;
+    font-size: 12px;
+  }
+  .mobile-row .hud-select {
+    width: 100%;
+  }
+  #chat-container {
+    padding: 14px max(12px, env(safe-area-inset-right)) 14px max(12px, env(safe-area-inset-left));
+  }
+  .welcome-banner {
+    padding: 22px 8px;
+    max-width: 100%;
+  }
+  .welcome-banner .wv-logo {
+    font-size: clamp(28px, 12vw, 40px);
+    letter-spacing: 5px;
+    overflow-wrap: anywhere;
+  }
+  .message {
+    max-width: 100%;
+    padding: 12px 14px;
+  }
+  .message-content {
+    font-size: 14px;
+    overflow-wrap: anywhere;
+  }
+  .message-content.markdown pre {
+    max-width: 100%;
+  }
+  .msg-meta {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .msg-actions,
+  .message.assistant .msg-rating {
+    display: flex;
+  }
+  .msg-rating {
+    flex-wrap: wrap;
+  }
+  #memory-panel {
+    width: calc(100% - 24px);
+    right: 12px;
+    left: 12px;
+    bottom: calc(104px + env(safe-area-inset-bottom));
+    max-height: calc(100dvh - 178px);
+    overflow-y: auto;
+  }
+  #archives-panel {
+    width: calc(100% - 24px);
+    left: 12px;
+    right: 12px;
+    bottom: calc(104px + env(safe-area-inset-bottom));
+    max-height: calc(100dvh - 178px);
+  }
+  .memory-input { flex-wrap: wrap; }
+  .memory-input input {
+    min-width: 0;
+    font-size: 16px;
+    min-height: 44px;
+  }
+  .memory-input button { min-height: 44px; min-width: 44px; }
+  .modal-overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+  .modal-box {
+    max-height: 94dvh;
+    border-radius: var(--r-lg) var(--r-lg) 0 0;
+    max-width: 100%;
+  }
+  .modal-header {
+    padding: 16px 16px 12px;
+    gap: 12px;
+  }
+  .modal-title {
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .modal-close {
+    height: 40px;
+    width: 40px;
+    flex-shrink: 0;
+  }
+  .modal-body { padding: 16px; }
   @keyframes modalIn {
     from { opacity: 0; transform: translateY(50px); }
     to { opacity: 1; transform: translateY(0); }
   }
+  .field-input,
+  .field-textarea,
+  .field-select,
+  #user-input,
+  .archives-search input {
+    font-size: 16px;
+  }
+  .field-label { letter-spacing: 1px; }
+  .btn-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .btn-row .btn-primary,
+  .btn-row .btn-ghost,
+  .btn-primary,
+  .btn-ghost {
+    min-height: 44px;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+  }
   .data-grid { grid-template-columns: 1fr 1fr; }
-  #input-area { padding: 8px 10px; gap: 7px; }
-  #send-btn { padding: 10px 14px; font-size: 12px; }
-  #voice-btn { width: 40px; height: 40px; font-size: 14px; }
-  #scroll-bottom { right: 58px; bottom: 75px; }
-  #archives-btn { left: 62px; }
-  #memory-toggle { right: 16px; }
+  .data-card { padding: 10px 8px; }
+  .data-card-value { font-size: 18px; }
+  .export-zone { padding: 18px 12px; }
+  .agent-preview {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .agent-card-actions {
+    flex-wrap: wrap;
+  }
+  .agent-action-btn {
+    flex: 1;
+    min-height: 36px;
+  }
+  .range-group {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .range-value {
+    min-width: 0;
+    text-align: left;
+  }
+  #input-area {
+    display: grid;
+    grid-template-columns: 42px 42px minmax(0, 1fr) 52px;
+    gap: 7px;
+    padding: 8px max(10px, env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+    align-items: end;
+  }
+  #user-input {
+    min-height: 42px;
+    max-height: 132px;
+    padding: 9px 12px;
+  }
+  #send-btn {
+    height: 42px;
+    min-width: 52px;
+    padding: 0;
+    font-size: 0;
+  }
+  #send-btn::after {
+    content: "▶";
+    font-size: 14px;
+    letter-spacing: 0;
+  }
+  #voice-btn,
+  #file-upload-btn {
+    width: 42px !important;
+    height: 42px !important;
+    font-size: 15px !important;
+  }
+  #scroll-bottom {
+    right: 62px;
+    bottom: calc(68px + env(safe-area-inset-bottom));
+  }
+  #archives-btn {
+    left: max(12px, env(safe-area-inset-left));
+    bottom: calc(68px + env(safe-area-inset-bottom));
+  }
+  #memory-toggle {
+    right: max(12px, env(safe-area-inset-right));
+    bottom: calc(68px + env(safe-area-inset-bottom));
+  }
+  #toast-container {
+    left: 12px;
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+  .toast { max-width: none; }
   .color-config-grid { grid-template-columns: 1fr; }
+  .wizard-presets { grid-template-columns: 1fr; }
+  #setup-wizard-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .wizard-box {
+    border-radius: var(--r-lg) var(--r-lg) 0 0;
+    max-height: 96dvh;
+    max-width: 100%;
+  }
+  .wizard-step {
+    padding: 22px 16px calc(22px + env(safe-area-inset-bottom));
+  }
+  .wizard-logo { margin-bottom: 18px; }
+  .wizard-logo-text {
+    font-size: clamp(28px, 10vw, 36px);
+    letter-spacing: 5px;
+  }
+  .wizard-title {
+    font-size: 16px;
+    letter-spacing: 1.5px;
+  }
+  .wizard-subtitle { margin-bottom: 20px; }
+  .wizard-preset-btn {
+    min-height: 44px;
+    text-align: center;
+  }
+  .agent-gen-grid {
+    grid-template-columns: 1fr;
+    max-height: 48dvh;
+  }
+  .wizard-gen-note {
+    max-width: 100%;
+  }
+  .modal-body > div[style*="grid-template-columns:1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+  .modal-body > div[style*="display:flex"] {
+    flex-wrap: wrap;
+  }
+  #import-preview > div[style*="display:flex"] {
+    align-items: stretch !important;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 390px) {
+  #input-area {
+    grid-template-columns: 40px 40px minmax(0, 1fr) 46px;
+    gap: 6px;
+  }
+  #voice-btn,
+  #file-upload-btn {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  #send-btn {
+    height: 40px;
+    min-width: 46px;
+  }
+  .data-grid { grid-template-columns: 1fr; }
+  .mobile-row .hud-btn,
+  .mobile-row .hud-select,
+  .mobile-row .status-pill {
+    flex-basis: 100%;
+  }
+  .wizard-logo-text {
+    letter-spacing: 3px;
+  }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
@@ -1378,6 +1660,31 @@ body::before {
   margin-bottom: 28px;
   line-height: 1.6;
 }
+.wizard-presets {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+.wizard-preset-btn {
+  background: var(--hull);
+  border: var(--border);
+  border-radius: var(--r);
+  color: var(--text);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  min-height: 42px;
+  padding: 10px 12px;
+  text-align: left;
+  transition: var(--transition);
+}
+.wizard-preset-btn:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  box-shadow: 0 0 18px var(--cyan-dim);
+}
 .wizard-progress {
   display: flex;
   justify-content: center;
@@ -1412,6 +1719,13 @@ body::before {
 .wizard-gen-detail {
   font-size: 12px;
   color: var(--text-dim);
+}
+.wizard-gen-note {
+  color: var(--text-dim);
+  font-size: 11px;
+  line-height: 1.5;
+  margin: 14px auto 0;
+  max-width: 420px;
 }
 .agent-gen-grid {
   display: grid;
@@ -1632,6 +1946,81 @@ body::before {
 .context-bar-fill.warn { background: var(--warning); }
 .context-bar-fill.danger { background: var(--danger); }
 
+/* ═══ FINAL MOBILE OVERRIDES ═══ */
+@media (max-width: 768px) {
+  #setup-wizard-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .wizard-box {
+    border-radius: var(--r-lg) var(--r-lg) 0 0;
+    max-height: 96dvh;
+    max-width: 100%;
+  }
+  .wizard-step {
+    padding: 22px 16px calc(22px + env(safe-area-inset-bottom));
+  }
+  .wizard-logo { margin-bottom: 18px; }
+  .wizard-logo-text {
+    font-size: clamp(28px, 10vw, 36px);
+    letter-spacing: 5px;
+  }
+  .wizard-title {
+    font-size: 16px;
+    letter-spacing: 1.5px;
+  }
+  .wizard-subtitle { margin-bottom: 20px; }
+  .wizard-presets,
+  .agent-gen-grid {
+    grid-template-columns: 1fr;
+  }
+  .wizard-preset-btn {
+    min-height: 44px;
+    text-align: center;
+  }
+  .agent-gen-grid {
+    max-height: 48dvh;
+  }
+  .wizard-gen-note {
+    max-width: 100%;
+  }
+  .msg-rating,
+  .message.assistant .msg-rating {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .file-upload-zone,
+  .file-preview {
+    align-items: flex-start;
+    overflow-wrap: anywhere;
+  }
+  .agent-card-actions {
+    flex-wrap: wrap;
+  }
+  .agent-action-btn {
+    flex: 1;
+    min-height: 36px;
+  }
+  .agent-advanced-toggle {
+    letter-spacing: 1px;
+    line-height: 1.4;
+  }
+  .range-group {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .range-value {
+    min-width: 0;
+    text-align: left;
+  }
+}
+
+@media (max-width: 390px) {
+  .wizard-logo-text {
+    letter-spacing: 3px;
+  }
+}
+
 /* ═══ EXPORT PDF ═══ */
 @media print {
   #libre-header, #input-area, #memory-toggle, #memory-panel,
@@ -1688,6 +2077,7 @@ body::before {
     <button class="hud-btn primary" id="open-api-modal">⬡ API KEY</button>
     <button class="hud-btn" id="open-agent-modal"><i class="fa-solid fa-gear" aria-hidden="true"></i> AGENT</button>
     <button class="hud-btn" id="open-data-modal">⬡ DATA</button>
+    <button class="hud-btn pwa-install-btn" id="install-pwa-btn"><i class="fa-solid fa-download" aria-hidden="true"></i> INSTALLER</button>
   </div>
   <!-- BURGER (mobile only) -->
   <button id="burger-btn" title="Menu"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
@@ -1717,6 +2107,7 @@ body::before {
     <button class="hud-btn primary" id="open-api-modal-mob" style="flex:1">⬡ API KEY</button>
     <button class="hud-btn" id="open-agent-modal-mob" style="flex:1"><i class="fa-solid fa-gear" aria-hidden="true"></i> AGENT</button>
     <button class="hud-btn" id="open-data-modal-mob" style="flex:1">⬡ DATA</button>
+    <button class="hud-btn pwa-install-btn" id="install-pwa-btn-mob" style="flex:1"><i class="fa-solid fa-download" aria-hidden="true"></i> INSTALLER</button>
   </div>
   <!-- Row 4 : Chat -->
   <div class="mobile-row">
@@ -2056,7 +2447,7 @@ body::before {
         <div class="wizard-dot" id="wdot-3b"></div>
       </div>
       <div class="wizard-title">Définissez votre IA</div>
-      <div class="wizard-subtitle">Ces informations permettront à Libre AI de générer automatiquement 20 agents spécialisés parfaitement adaptés à votre contexte.</div>
+      <div class="wizard-subtitle">Donnez un nom, choisissez un profil si besoin, puis Libre AI créera vos 20 agents spécialisés en une seule génération.</div>
       <div class="field-group">
         <label class="field-label"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> Nom de votre IA <span style="color:var(--danger)">*</span></label>
         <input type="text" class="field-input" id="wizard-ai-name" placeholder="Ex : Atlas, Sentinel, Nexus, MyAssistant…">
@@ -2064,8 +2455,14 @@ body::before {
       </div>
       <div class="field-group">
         <label class="field-label"><i class="fa-solid fa-rocket" aria-hidden="true"></i> But principal de votre IA <span style="color:var(--danger)">*</span></label>
-        <textarea class="field-textarea" id="wizard-ai-goal" rows="3" placeholder="Décrivez votre contexte et objectif. Ex : &#10;'Je suis développeur freelance web, j'ai besoin d'une IA pour m'aider avec le code, la gestion de projets clients, la rédaction de propositions commerciales et la veille technologique.'&#10;ou&#10;'Je suis étudiant en médecine, j'ai besoin d'aide pour réviser, comprendre des cas cliniques, préparer mes examens et m'organiser.'"></textarea>
-        <div class="field-hint">▸ Plus vous êtes précis, plus les agents générés seront pertinents.</div>
+        <textarea class="field-textarea" id="wizard-ai-goal" rows="3" placeholder="Ex : Je veux une IA simple pour m'aider au quotidien : écrire, comprendre, organiser mes idées, apprendre plus vite et résoudre mes blocages."></textarea>
+        <div class="wizard-presets" aria-label="Exemples d'objectifs">
+          <button type="button" class="wizard-preset-btn" data-ai-name="Atlas" data-goal="Je veux une IA polyvalente pour m'aider au quotidien : écrire, résumer, comprendre des sujets, organiser mes idées, préparer mes messages et trouver des solutions simples.">Débutant polyvalent</button>
+          <button type="button" class="wizard-preset-btn" data-ai-name="CodeForge" data-goal="Je veux une IA pour m'aider à apprendre le développement, corriger mes erreurs, expliquer le code simplement, proposer des étapes claires et m'aider à construire des projets web.">Code et projets</button>
+          <button type="button" class="wizard-preset-btn" data-ai-name="Campus" data-goal="Je suis étudiant et je veux une IA pour réviser, expliquer les cours, faire des fiches, préparer des exercices, organiser mon planning et m'aider à mémoriser.">Études</button>
+          <button type="button" class="wizard-preset-btn" data-ai-name="Plania" data-goal="Je veux une IA pour m'aider à planifier mes journées, organiser mes tâches, prioriser mes objectifs, préparer des étapes simples et suivre mes projets sans me perdre.">Planification</button>
+        </div>
+        <div class="field-hint">Choisissez un exemple ou écrivez votre propre objectif. Une phrase claire suffit.</div>
       </div>
       <div class="field-group">
         <label class="field-label"><i class="fa-solid fa-palette" aria-hidden="true"></i> Couleurs de l'interface</label>
@@ -2092,7 +2489,7 @@ body::before {
       </div>
       <div class="btn-row" style="border-top:none;padding-top:0">
         <button class="btn-ghost" id="wizard-step2-back">← Retour</button>
-        <button class="btn-primary" id="wizard-step2-next">GÉNÉRER MES AGENTS →</button>
+        <button class="btn-primary" id="wizard-step2-next">CRÉER 20 AGENTS IA →</button>
       </div>
     </div>
 
@@ -2104,11 +2501,12 @@ body::before {
         <div class="wizard-dot active"></div>
       </div>
       <div class="wizard-title" id="wizard-step3-title">Génération des Agents IA</div>
-      <div class="wizard-subtitle" id="wizard-step3-sub">Mistral analyse votre profil et crée 20 agents ultra-spécialisés…</div>
+      <div class="wizard-subtitle" id="wizard-step3-sub">Mistral crée vos 20 agents spécialisés. Cette étape dépend de votre connexion et de votre quota API.</div>
       <div class="wizard-generating" id="wizard-gen-loader">
         <div class="wizard-gen-icon"><i class="fa-solid fa-gear" aria-hidden="true"></i></div>
-        <div class="wizard-gen-status">GÉNÉRATION EN COURS…</div>
+        <div class="wizard-gen-status">CRÉATION DES 20 AGENTS…</div>
         <div class="wizard-gen-detail" id="wizard-gen-detail">Connexion à Mistral AI…</div>
+        <div class="wizard-gen-note">Gardez cette fenêtre ouverte. Libre AI demande un JSON compact pour accélérer la réponse, puis prépare les agents automatiquement.</div>
       </div>
       <div id="wizard-agents-preview" style="display:none">
         <div class="agent-gen-grid" id="wizard-agents-grid"></div>
@@ -2273,6 +2671,8 @@ let state = {
   attachedFile: null  // {type, data, name, mimeType}
 };
 
+let deferredInstallPrompt = null;
+
 // ════════════════════════════════════════
 // UTILS
 // ════════════════════════════════════════
@@ -2280,6 +2680,85 @@ const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 const uuid = () => crypto.randomUUID();
 const now = () => Date.now();
+const modelLabel = m => {
+  const shortName = String(m?.name || m?.id || "").split(" — ")[0].trim();
+  return `${shortName}${m?.badge ? ` · ${m.badge}` : ""}`;
+};
+const modelTitle = m => `${m.name} • ${m.desc} • ${Number(m.tokens || 0).toLocaleString()} max tokens${m.vision?' • Vision':''}${m.audio?' • Audio':''}`;
+
+function setupSingleFilePwa() {
+  const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+    <rect width="512" height="512" rx="96" fill="#050101"/>
+    <path d="M256 44 436 150v212L256 468 76 362V150L256 44Z" fill="none" stroke="#ff1744" stroke-width="24"/>
+    <path d="M256 126 365 190v128l-109 64-109-64V190l109-64Z" fill="none" stroke="#ff8a3d" stroke-width="14" opacity=".75"/>
+    <circle cx="256" cy="256" r="54" fill="#ff1744"/>
+    <path d="M256 44v82M256 386v82M76 150l71 40M365 190l71-40M76 362l71-44M365 318l71 44" stroke="#ff1744" stroke-width="14" stroke-linecap="round"/>
+  </svg>`;
+  const iconUrl = `data:image/svg+xml,${encodeURIComponent(iconSvg)}`;
+  const manifest = {
+    name: "Libre AI",
+    short_name: "Libre AI",
+    description: "Assistant IA personnel local avec agents Mistral.",
+    start_url: ".",
+    scope: ".",
+    display: "standalone",
+    display_override: ["window-controls-overlay", "standalone", "minimal-ui"],
+    background_color: "#050101",
+    theme_color: "#050101",
+    orientation: "portrait-primary",
+    icons: [
+      { src: iconUrl, sizes: "any", type: "image/svg+xml", purpose: "any maskable" }
+    ]
+  };
+  const manifestUrl = `data:application/manifest+json,${encodeURIComponent(JSON.stringify(manifest))}`;
+  const manifestLink = document.getElementById("pwa-manifest");
+  const favicon = document.getElementById("pwa-favicon");
+  const appleIcon = document.getElementById("pwa-apple-icon");
+  if (manifestLink) manifestLink.href = manifestUrl;
+  if (favicon) favicon.href = iconUrl;
+  if (appleIcon) appleIcon.href = iconUrl;
+
+  const isStandalone = () => window.matchMedia?.("(display-mode: standalone)")?.matches || window.navigator.standalone === true;
+  const isIos = () => /iphone|ipad|ipod/i.test(navigator.userAgent || "");
+  const installButtons = () => Array.from(document.querySelectorAll(".pwa-install-btn"));
+  const updateButtons = () => {
+    const shouldShow = !isStandalone() && (deferredInstallPrompt || isIos());
+    installButtons().forEach(btn => btn.classList.toggle("ready", Boolean(shouldShow)));
+  };
+
+  window.addEventListener("beforeinstallprompt", event => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    updateButtons();
+  });
+
+  window.addEventListener("appinstalled", () => {
+    deferredInstallPrompt = null;
+    updateButtons();
+    if (typeof toast === "function") toast("Libre AI est installé", "success");
+  });
+
+  installButtons().forEach(btn => {
+    btn.onclick = async () => {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        await deferredInstallPrompt.userChoice.catch(() => null);
+        deferredInstallPrompt = null;
+        updateButtons();
+        return;
+      }
+      if (isIos()) {
+        toast("Sur iPhone/iPad : bouton Partager, puis Ajouter à l'écran d'accueil.", "info");
+        return;
+      }
+      toast("Pour installer : ouvrez cette page en HTTPS ou localhost, puis utilisez le menu du navigateur.", "info");
+    };
+  });
+
+  updateButtons();
+}
+
+setupSingleFilePwa();
 
 const escapeText = t => String(t ?? '')
   .replace(/&/g,"&amp;")
@@ -3270,7 +3749,9 @@ window.openEditAgent = async (id) => {
     sel.innerHTML = '<option value="">Auto</option>';
     MODELS.forEach(m => {
       const opt = document.createElement('option');
-      opt.value = m.id; opt.textContent = m.name;
+      opt.value = m.id;
+      opt.textContent = modelLabel(m);
+      opt.title = modelTitle(m);
       if (ag.modelPref === m.id) opt.selected = true;
       sel.appendChild(opt);
     });
@@ -3483,6 +3964,20 @@ function setWizardStep(n) {
   if (s) s.classList.add('active');
 }
 
+function initWizardGoalPresets() {
+  document.querySelectorAll('.wizard-preset-btn').forEach(btn => {
+    btn.onclick = () => {
+      const nameInput = document.getElementById('wizard-ai-name');
+      const goalInput = document.getElementById('wizard-ai-goal');
+      if (nameInput && !nameInput.value.trim()) nameInput.value = btn.dataset.aiName || "Libre AI";
+      if (goalInput) {
+        goalInput.value = btn.dataset.goal || "";
+        goalInput.focus();
+      }
+    };
+  });
+}
+
 async function repairAgentsJsonWithMistral(apiKey, brokenJson) {
   const repairPrompt = `Répare ce JSON pour qu'il respecte strictement ce schéma:
 {"agents":[{"name":"string","desc":"string","instructions":"string","tags":["string"],"style":"concis|detaille|formel|creatif|pedagogique","temperature":0.7}]}
@@ -3497,10 +3992,10 @@ JSON à réparer:
 ${String(brokenJson || '').slice(0, 24000)}`;
 
   const payload = {
-    model: "mistral-large-2512",
+    model: "mistral-small-2506",
     messages: [{ role: "user", content: repairPrompt }],
     temperature: 0,
-    max_tokens: 8000,
+    max_tokens: 6000,
     response_format: { type: "json_object" }
   };
   let res = await fetch("https://api.mistral.ai/v1/chat/completions", {
@@ -3535,7 +4030,8 @@ Contraintes impératives:
 - Utilise seulement des chaînes JSON simples.
 - Échappe les guillemets internes.
 - Évite les retours ligne dans les valeurs.
-- Les instructions doivent rester entre 700 et 1200 caractères par agent.
+- Les instructions doivent rester entre 350 et 650 caractères par agent.
+- Va droit au but: phrases courtes, règles concrètes, pas d'introduction.
 
 Schéma exact:
 {
@@ -3543,7 +4039,7 @@ Schéma exact:
     {
       "name": "Nom court de l'agent",
       "desc": "Description courte du rôle (max 100 chars)",
-      "instructions": "Instructions détaillées pour cet agent (200-400 mots)",
+      "instructions": "Instructions utiles et compactes pour cet agent",
       "tags": ["tag1", "tag2", "tag3"],
       "style": "concis|detaille|formel|creatif|pedagogique",
       "temperature": 0.7
@@ -3552,10 +4048,10 @@ Schéma exact:
 }`;
 
   const payload = {
-    model: "mistral-large-2512",
+    model: "mistral-small-2506",
     messages: [{ role: "user", content: prompt }],
-    temperature: 0.8,
-    max_tokens: 8000,
+    temperature: 0.55,
+    max_tokens: 6000,
     response_format: { type: "json_object" }
   };
   let res = await fetch("https://api.mistral.ai/v1/chat/completions", {
@@ -3590,6 +4086,8 @@ Schéma exact:
 }
 
 function initWizardEvents() {
+  initWizardGoalPresets();
+
   // Step 1 → Step 2
   document.getElementById('wizard-step1-next').onclick = () => {
     const key = document.getElementById('wizard-api-key').value.trim();
@@ -3606,19 +4104,27 @@ function initWizardEvents() {
 
   // Step 2 → Step 3 (generate)
   document.getElementById('wizard-step2-next').onclick = async () => {
+    const btn = document.getElementById('wizard-step2-next');
     const name = document.getElementById('wizard-ai-name').value.trim();
     const goal = document.getElementById('wizard-ai-goal').value.trim();
     if (!name || !goal) { toast("Nom et objectif obligatoires", "error"); return; }
-    const theme = getWizardTheme();
-    state.customTheme = theme;
-    state.aiConfig = { name, goal, theme };
-    await db.put('settings', { id: 'aiConfig', value: state.aiConfig });
-    await db.put('settings', { id: 'customTheme', value: theme });
-    await db.put('settings', { id: 'theme', value: 'custom' });
-    applyTheme('custom', theme);
-    updateBrandName();
-    setWizardStep(3);
-    await runAgentGeneration(name, goal);
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spin-ring"></span> PRÉPARATION…';
+    try {
+      const theme = getWizardTheme();
+      state.customTheme = theme;
+      state.aiConfig = { name, goal, theme };
+      await db.put('settings', { id: 'aiConfig', value: state.aiConfig });
+      await db.put('settings', { id: 'customTheme', value: theme });
+      await db.put('settings', { id: 'theme', value: 'custom' });
+      applyTheme('custom', theme);
+      updateBrandName();
+      setWizardStep(3);
+      await runAgentGeneration(name, goal);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = 'CRÉER 20 AGENTS IA →';
+    }
   };
 
   // Finish
@@ -3828,13 +4334,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   MODELS.forEach(m => {
     const opt = document.createElement("option");
     opt.value = m.id;
-    opt.textContent = m.name;
-    opt.title = `${m.desc} • ${m.tokens.toLocaleString()} max tokens${m.vision?' • Vision':''}${m.audio?' • Audio':''}`;
+    opt.textContent = modelLabel(m);
+    opt.title = modelTitle(m);
     modelSel.appendChild(opt);
     if (agentModelPref) {
       const opt2 = document.createElement("option");
       opt2.value = m.id;
-      opt2.textContent = m.name;
+      opt2.textContent = modelLabel(m);
+      opt2.title = modelTitle(m);
       agentModelPref.appendChild(opt2);
     }
   });
@@ -4397,7 +4904,8 @@ function bindEvents() {
       MODELS.forEach(m => {
         const opt = document.createElement("option");
         opt.value = m.id;
-        opt.textContent = m.name;
+        opt.textContent = modelLabel(m);
+        opt.title = modelTitle(m);
         mModSel.appendChild(opt);
       });
       mModSel.value = state.model;
