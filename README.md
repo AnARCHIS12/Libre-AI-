@@ -15,7 +15,7 @@
 <div align="center">
   <strong>Crédit original</strong><br>
   <code>Libre AI</code> est créé à partir de <code>VOANH AI</code>, projet original de <strong>LaurentVoanh</strong>.<br>
-  Merci à lui pour ce projet génial.
+  Merci à toi pour ce projet génial.
 </div>
 
 <br>
@@ -221,7 +221,7 @@ Il n'y a pas de build, pas de serveur Node, pas de dépendances locales à insta
 
 ## Crédits
 
-- Libre AI est créé à partir de `VOANH AI`, projet original de LaurentVoanh. Merci à lui pour ce projet génial.
+- Libre AI est créé à partir de `VOANH AI`, projet original de LaurentVoanh. Merci à toi pour ce projet génial.
 - Moteur IA : Mistral AI
 - UI : Bootstrap 5.3
 - Icônes : Font Awesome via jsDelivr
