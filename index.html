@@ -3413,14 +3413,22 @@ async function loadAgents() {
   try {
     const agents = await db.getAll('agents') || [];
     const sel = $("#agent-select");
-    sel.innerHTML = '<option value="">▸ NO AGENT</option>';
-    agents.forEach(a => {
-      const opt = document.createElement("option");
-      opt.value = a.id;
-      opt.textContent = `◈ ${a.name}`;
-      opt.title = a.desc;
-      sel.appendChild(opt);
-    });
+    const mobSel = $("#agent-select-mob");
+    const selectedId = state.agent?.id || sel?.value || mobSel?.value || "";
+    const fillAgentSelect = target => {
+      if (!target) return;
+      target.innerHTML = '<option value="">▸ NO AGENT</option>';
+      agents.forEach(a => {
+        const opt = document.createElement("option");
+        opt.value = a.id;
+        opt.textContent = `◈ ${a.name}`;
+        opt.title = a.desc || "";
+        target.appendChild(opt);
+      });
+      target.value = agents.some(a => a.id === selectedId) ? selectedId : "";
+    };
+    fillAgentSelect(sel);
+    fillAgentSelect(mobSel);
     // Existing agents in modal
     const list = $("#agent-existing-list");
     if (list) {
@@ -4643,6 +4651,8 @@ function bindEvents() {
   $("#agent-select").onchange = async e => {
     try {
       state.agent = e.target.value ? await db.get('agents', e.target.value) : null;
+      const mobSel = $("#agent-select-mob");
+      if (mobSel) mobSel.value = e.target.value;
       const sys = (state.messages||[]).find(m => m.role === "system");
       if (sys) { sys.content = buildSystemPrompt(); await saveChat(); renderMessages(); }
     } catch(err) { console.error(err); }
@@ -4882,6 +4892,7 @@ function bindEvents() {
     burgerBtn.onclick = (e) => {
       e.stopPropagation();
       mobileMenu.classList.toggle("open");
+      syncMobile();
     };
 
     // Sync mobile selects with desktop selects
@@ -4969,6 +4980,7 @@ function bindEvents() {
     }
 
     // Sync on open
+    syncMobile();
     burgerBtn.addEventListener('click', syncStatusMob);
   }
 
