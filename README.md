@@ -12,13 +12,6 @@
   <img src="https://img.shields.io/badge/theme-red%20black-ff1744?style=flat-square&labelColor=050101" alt="Red black theme">
 </p>
 
-<div align="center">
-  <strong>Crédit original</strong><br>
-  <code>Libre AI</code> est créé à partir de <code>VOANH AI</code>, projet original de <strong>LaurentVoanh</strong>.<br>
-  Merci à toi pour ce projet génial.
-</div>
-
-<br>
 
 # Libre AI
 
