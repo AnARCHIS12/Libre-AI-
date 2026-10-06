@@ -4204,21 +4204,28 @@ Schéma exact:
     max_tokens: 6000,
     response_format: { type: "json_object" }
   };
-  let res = await fetch(`${MISTRAL_API_BASE}/chat/completions`, {
-    method: "POST",
-    headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
-  if (!res.ok && res.status === 400) {
-    delete payload.response_format;
+  let res;
+  try {
     res = await fetch(`${MISTRAL_API_BASE}/chat/completions`, {
       method: "POST",
       headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
+    if (!res.ok && res.status === 400) {
+      delete payload.response_format;
+      res = await fetch(`${MISTRAL_API_BASE}/chat/completions`, {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+    }
+  } catch(networkError) {
+    console.warn("Connexion Mistral indisponible, agents locaux de secours:", networkError);
+    toast("Mistral est momentanément inaccessible : 20 agents locaux vont être créés", "info");
+    return fallbackAgents(aiName, aiGoal);
   }
 
-  if (!res.ok) throw new Error("API Mistral : " + res.status);
+  if (!res.ok) throw new Error(mistralErrorMessage(await res.text(), res.status));
   const data = await res.json();
   const text = data.choices?.[0]?.message?.content || "";
   try {
