@@ -22,7 +22,7 @@ Libre AI est une application web locale pour discuter avec les modèles Mistral 
 - Application autonome en HTML, CSS et JavaScript vanilla.
 - Appels directs à l'API `https://api.mistral.ai/v1/chat/completions`.
 - Dictée vocale via l'API Mistral `audio/transcriptions` avec `voxtral-mini-latest`.
-- Support de plusieurs modèles Mistral, dont modèles texte, code, vision et audio selon disponibilité API.
+- Support des modèles Mistral actuels (alias `-latest`), avec découverte automatique des modèles réellement disponibles pour votre clé.
 - Affichage Markdown des réponses : titres, listes, gras, code, citations et liens.
 - Mémoire globale persistante avec IndexedDB.
 - Agents spécialisés créés manuellement ou générés automatiquement avec Mistral.
@@ -31,6 +31,8 @@ Libre AI est une application web locale pour discuter avec les modèles Mistral 
 - Interface mobile renforcée : menu compact, zones tactiles, safe-area, modales et wizard adaptés aux petits écrans.
 - Mode PWA single-file : manifest, icônes et bouton d'installation générés directement depuis `index.html`.
 - Icônes Font Awesome, polices Fontsource et Bootstrap servis via jsDelivr.
+
+Le modèle de départ est `mistral-small-latest`, recommandé par la documentation Mistral pour un premier appel en mode Free. Les modèles dont l'identifiant commence par `labs-` sont gratuits, mais expérimentaux. Après activation de la clé, Libre AI interroge `GET /v1/models` et masque les modèles retirés ou non accessibles à l'organisation.
 
 ## Installation
 
@@ -62,7 +64,7 @@ Limite volontaire : comme tout reste dans `index.html`, il n'y a pas de fichier 
 ## Clé API Mistral
 
 1. Allez sur `https://console.mistral.ai`.
-2. Créez un compte ou connectez-vous.
+2. Créez un compte ou connectez-vous. Le mode Free active l'accès API avec des limites d'utilisation et de débit.
 3. Ouvrez la section `API Keys`.
 4. Créez une nouvelle clé, par exemple `Libre-AI-Personal`.
 5. Copiez la clé et collez-la dans Libre AI.
@@ -77,7 +79,7 @@ Le bouton micro enregistre votre voix dans le navigateur avec `MediaRecorder`, p
 https://api.mistral.ai/v1/audio/transcriptions
 ```
 
-La transcription utilise le modèle `voxtral-mini-latest` et insère le texte obtenu directement dans la zone de saisie.
+La transcription utilise le modèle actuel `voxtral-mini-latest` et insère le texte obtenu directement dans la zone de saisie.
 
 Utilisation :
 

@@ -2694,7 +2694,39 @@ const MODELS = [
   { id:"pixtral-12b-2409",            name:"Pixtral Vision — Analyse Images",  badge:"Vision",    desc:"Analyse visuelle multimodale, comprend images et texte",       tokens:50000,  ctx:"4M",   temp:0.42, vision:true },
   { id:"pixtral-large-2411",          name:"Pixtral OmniSight — Vision Pro",   badge:"Vision Pro", desc:"Vision premium, compréhension profonde d'images complexes",  tokens:50000,  ctx:"4M",   temp:0.42, vision:true },
   { id:"voxtral-mini-2507",           name:"Voxtral Echo — Audio Léger",       badge:"Audio",     desc:"Traitement audio, transcription légère et précise",            tokens:50000,  ctx:"4M",   temp:0.42, audio:true },
-  { id:"voxtral-small-2507",          name:"Voxtral Sonic — Audio Rapide",     badge:"Audio",     desc:"Audio rapide, transcription intelligente multi-langues",       tokens:50000,  ctx:"4M",   temp:0.42, audio:true }
+  { id:"voxtral-small-latest",        name:"Voxtral Small — Audio",           badge:"Audio",      desc:"Compréhension audio pour les conversations",                  tokens:128000, ctx:"128k", temp:0.42, audio:true }
+];
+
+// Les alias -latest évitent de casser l'application à chaque retrait de version.
+// Les modèles Labs sont gratuits, mais expérimentaux.
+const MISTRAL_API_BASE = "https://api.mistral.ai/v1";
+const DEFAULT_MODEL_ID = "mistral-small-latest";
+const MODEL_ALIASES = {
+  "mistral-small-2506": DEFAULT_MODEL_ID,
+  "mistral-small-2603": DEFAULT_MODEL_ID,
+  "mistral-medium-2508": "mistral-medium-latest",
+  "mistral-large-2512": "mistral-large-latest",
+  "devstral-2512": "devstral-latest",
+  "devstral-medium-2507": "devstral-latest",
+  "devstral-small-2507": "devstral-latest",
+  "codestral-2508": "codestral-latest",
+  "voxtral-small-2507": "voxtral-small-latest",
+  "voxtral-mini-2507": "voxtral-small-latest"
+};
+
+const CURRENT_MODEL_CATALOG = [
+  { id:"mistral-small-latest", name:"Mistral Small — Gratuit", badge:"Free", desc:"Modèle polyvalent rapide, recommandé pour l'usage quotidien", tokens:256000, ctx:"256k", temp:0.42, vision:true },
+  { id:"labs-leanstral-2603", name:"Leanstral — Agent gratuit", badge:"Labs · Free", desc:"Modèle gratuit orienté raisonnement et tâches d'agent", tokens:256000, ctx:"256k", temp:0.35 },
+  { id:"labs-mistral-small-creative", name:"Mistral Small Creative", badge:"Labs · Free", desc:"Modèle expérimental gratuit pour la création", tokens:256000, ctx:"256k", temp:0.75 },
+  { id:"mistral-medium-latest", name:"Mistral Medium", badge:"Puissant", desc:"Modèle multimodal et agentique haut de gamme", tokens:256000, ctx:"256k", temp:0.42, vision:true },
+  { id:"mistral-large-latest", name:"Mistral Large", badge:"Premium", desc:"Pour les analyses complexes et les longues réponses", tokens:256000, ctx:"256k", temp:0.35, vision:true },
+  { id:"devstral-latest", name:"Devstral — Développement", badge:"Dev", desc:"Agent de développement et utilisation d'outils", tokens:256000, ctx:"256k", temp:0.35 },
+  { id:"codestral-latest", name:"Codestral — Code", badge:"Code", desc:"Génération et compréhension de code", tokens:128000, ctx:"128k", temp:0.35 },
+  { id:"ministral-3b-2512", name:"Ministral 3B — Rapide", badge:"Rapide", desc:"Petit modèle efficace pour les tâches simples", tokens:256000, ctx:"256k", temp:0.55 },
+  { id:"ministral-8b-2512", name:"Ministral 8B — Équilibré", badge:"Rapide", desc:"Modèle compact polyvalent", tokens:256000, ctx:"256k", temp:0.5 },
+  { id:"ministral-14b-2512", name:"Ministral 14B — Puissant", badge:"Open", desc:"Modèle ouvert performant", tokens:256000, ctx:"256k", temp:0.45 },
+  { id:"magistral-small-latest", name:"Magistral Small — Raisonnement", badge:"Raisonnement", desc:"Raisonnement structuré", tokens:128000, ctx:"128k", temp:0.35 },
+  { id:"voxtral-small-latest", name:"Voxtral Small — Audio", badge:"Audio", desc:"Compréhension audio pour les conversations", tokens:128000, ctx:"128k", temp:0.42, audio:true }
 ];
 
 const DB_NAME = "VOANH_AI_DB";
@@ -2705,7 +2737,7 @@ let state = {
   chatId: null,
   messages: [],
   agent: null,
-  model: "codestral-2508",
+  model: DEFAULT_MODEL_ID,
   globalMemories: [],
   aiConfig: null, // {name, goal} from wizard
   customTheme: null,
@@ -2726,6 +2758,61 @@ const modelLabel = m => {
   return `${shortName}${m?.badge ? ` · ${m.badge}` : ""}`;
 };
 const modelTitle = m => `${m.name} • ${m.desc} • ${Number(m.tokens || 0).toLocaleString()} max tokens${m.vision?' • Vision':''}${m.audio?' • Audio':''}`;
+
+function normalizeModelId(id) {
+  return MODEL_ALIASES[id] || id || DEFAULT_MODEL_ID;
+}
+
+function renderModelOptions() {
+  const selects = [document.getElementById('model-select'), document.getElementById('model-select-mob'), document.getElementById('agent-model-pref'), document.getElementById('edit-agent-model-pref')].filter(Boolean);
+  selects.forEach(select => {
+    const previous = normalizeModelId(select.value || state.model);
+    select.innerHTML = select.id.includes('agent-model-pref') ? '<option value="">Auto</option>' : '';
+    MODELS.forEach(model => {
+      const option = document.createElement('option');
+      option.value = model.id;
+      option.textContent = modelLabel(model);
+      option.title = modelTitle(model);
+      select.appendChild(option);
+    });
+    select.value = MODELS.some(model => model.id === previous) ? previous : DEFAULT_MODEL_ID;
+  });
+  state.model = MODELS.some(model => model.id === normalizeModelId(state.model)) ? normalizeModelId(state.model) : DEFAULT_MODEL_ID;
+}
+
+async function refreshAvailableModels(apiKey) {
+  if (!apiKey) return false;
+  try {
+    const res = await fetch(`${MISTRAL_API_BASE}/models`, { headers: { Authorization: `Bearer ${apiKey}` } });
+    const raw = await res.text();
+    let data = {};
+    try { data = raw ? JSON.parse(raw) : {}; } catch (e) {}
+    if (!res.ok) throw new Error(data.message || data.error?.message || `HTTP ${res.status}`);
+    const available = new Map((data.data || []).filter(model => model?.id && model.archived !== true && model.capabilities?.completion_chat !== false).map(model => [model.id, model]));
+    const catalog = CURRENT_MODEL_CATALOG.filter(model => available.has(model.id) || model.id.startsWith('labs-') && available.has(model.id));
+    const discovered = [...available.values()].filter(model => !catalog.some(item => item.id === model.id) && !model.id.startsWith('ft:')).slice(0, 30).map(model => ({
+      id: model.id, name: model.id, badge: model.id.startsWith('labs-') ? 'Labs · Free' : 'API', desc: 'Modèle disponible pour cette clé API', tokens: model.max_context_length || 32768, ctx: model.max_context_length ? `${Math.round(model.max_context_length / 1000)}k` : '-', temp: 0.5,
+      vision: Boolean(model.capabilities?.vision), audio: model.id.includes('voxtral')
+    }));
+    MODELS.splice(0, MODELS.length, ...(catalog.length ? [...catalog, ...discovered] : CURRENT_MODEL_CATALOG));
+    renderModelOptions();
+    return true;
+  } catch (error) {
+    console.warn('[Libre AI] impossible de lire les modèles disponibles:', error);
+    MODELS.splice(0, MODELS.length, ...CURRENT_MODEL_CATALOG);
+    renderModelOptions();
+    return false;
+  }
+}
+
+function mistralErrorMessage(raw, status) {
+  try {
+    const data = JSON.parse(raw);
+    return data.message || data.error?.message || `HTTP ${status}`;
+  } catch (e) {
+    return raw || `HTTP ${status}`;
+  }
+}
 
 function setupSingleFilePwa() {
   const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -3354,7 +3441,8 @@ async function loadChat(id) {
     if (!chat) return;
     state.chatId = id;
     state.messages = chat.messages || [];
-    state.model = chat.model || state.model;
+    state.model = normalizeModelId(chat.model || state.model);
+    if (!MODELS.some(model => model.id === state.model)) state.model = DEFAULT_MODEL_ID;
     $("#model-select").value = state.model;
     if (chat.agentId) {
       try {
@@ -3401,7 +3489,8 @@ async function _sendMessageOriginal() {
       });
     }
     // Use agent's preferred model if set
-    const activeModelId = (state.agent?.modelPref && state.agent.modelPref !== '') ? state.agent.modelPref : state.model;
+    const requestedModelId = (state.agent?.modelPref && state.agent.modelPref !== '') ? state.agent.modelPref : state.model;
+    const activeModelId = normalizeModelId(requestedModelId);
     const model = MODELS.find(m => m.id === activeModelId) || MODELS[0];
     if (state.agent?.modelPref && state.agent.modelPref !== '') {
       // temp switch model for this request
@@ -3410,7 +3499,7 @@ async function _sendMessageOriginal() {
     updateContextMeter();
     const agentTemp = state.agent?.temperature !== undefined ? state.agent.temperature : model.temp;
     const agentMaxTok = state.agent?.maxTokens || 4096;
-    const res = await fetch("https://api.mistral.ai/v1/chat/completions", {
+    const res = await fetch(`${MISTRAL_API_BASE}/chat/completions`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${state.apiKey}`,
@@ -3427,9 +3516,7 @@ async function _sendMessageOriginal() {
 
     if (!res.ok) {
       const err = await res.text();
-      let errMsg = err.slice(0, 300);
-      try { const j = JSON.parse(err); errMsg = j.message || j.error?.message || errMsg; } catch(e) {}
-      throw new Error(errMsg);
+      throw new Error(mistralErrorMessage(err, res.status));
     }
 
     const data = await res.json();
@@ -3624,8 +3711,8 @@ function initFileUpload() {
     const file = e.target.files[0];
     if (!file) return;
     const model = MODELS.find(m => m.id === state.model);
-    const isVision = model?.vision || state.model.includes('pixtral');
-    const isAudio = model?.audio || state.model.includes('voxtral');
+    const isVision = Boolean(model?.vision);
+    const isAudio = Boolean(model?.audio);
     const isImage = file.type.startsWith('image/');
     const isAudioFile = file.type.startsWith('audio/');
     if (isImage) {
@@ -3696,8 +3783,8 @@ async function sendMessage() {
   }
 
   const model = MODELS.find(m => m.id === state.model) || MODELS[0];
-  const isVision = state.model.includes('pixtral');
-  const isAudio = state.model.includes('voxtral');
+  const isVision = Boolean(model?.vision);
+  const isAudio = Boolean(model?.audio);
 
   if (state.attachedFile && (isVision || isAudio)) {
     // Multi-modal message
@@ -3721,10 +3808,14 @@ async function sendMessage() {
     // Build multimodal content
     let msgContent = [];
     if (state.attachedFile.type === 'image') {
-      msgContent.push({ type: "image_url", image_url: state.attachedFile.data });
+      msgContent.push({ type: "image_url", image_url: { url: state.attachedFile.data } });
+    } else if (state.attachedFile.type === 'audio') {
+      const [prefix, encoded] = String(state.attachedFile.data || '').split(',', 2);
+      const format = String(state.attachedFile.mimeType || '').split('/')[1]?.split(';')[0] || 'wav';
+      msgContent.push({ type: "input_audio", input_audio: { data: encoded || prefix || '', format } });
     }
     if (txt) msgContent.push({ type: "text", text: txt });
-    else msgContent.push({ type: "text", text: "Analyse cette image en détail." });
+    else msgContent.push({ type: "text", text: state.attachedFile.type === 'image' ? "Analyse cette image en détail." : "Transcris et analyse cet audio." });
 
     const contextMessages = [
       { role: "system", content: buildSystemPrompt() },
@@ -3734,12 +3825,13 @@ async function sendMessage() {
     try {
       const agentTemp = state.agent?.temperature ?? model.temp;
       const agentMaxTok = state.agent?.maxTokens || 4096;
-      const res = await fetch("https://api.mistral.ai/v1/chat/completions", {
+      const activeModelId = normalizeModelId((state.agent?.modelPref && state.agent.modelPref !== '') ? state.agent.modelPref : state.model);
+      const res = await fetch(`${MISTRAL_API_BASE}/chat/completions`, {
         method: "POST",
         headers: { "Authorization": `Bearer ${state.apiKey}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ model: state.model, messages: contextMessages, temperature: agentTemp, max_tokens: agentMaxTok })
+        body: JSON.stringify({ model: activeModelId, messages: contextMessages, temperature: agentTemp, max_tokens: agentMaxTok })
       });
-      if (!res.ok) throw new Error(await res.text());
+      if (!res.ok) throw new Error(mistralErrorMessage(await res.text(), res.status));
       const data = await res.json();
       const reply = data.choices?.[0]?.message?.content || "Aucune réponse";
       hideTyping();
@@ -3760,7 +3852,7 @@ async function sendMessage() {
   }
 
   if (state.attachedFile && !isVision && !isAudio) {
-    toast("Ce modèle ne supporte pas les fichiers. Utilisez Pixtral Vision ou Voxtral pour audio.", "error");
+    toast("Ce modèle ne supporte pas les fichiers. Choisissez un modèle Vision ou Voxtral.", "error");
     return;
   }
 
@@ -4041,26 +4133,26 @@ JSON à réparer:
 ${String(brokenJson || '').slice(0, 24000)}`;
 
   const payload = {
-    model: "mistral-small-2506",
+    model: DEFAULT_MODEL_ID,
     messages: [{ role: "user", content: repairPrompt }],
     temperature: 0,
     max_tokens: 6000,
     response_format: { type: "json_object" }
   };
-  let res = await fetch("https://api.mistral.ai/v1/chat/completions", {
+  let res = await fetch(`${MISTRAL_API_BASE}/chat/completions`, {
     method: "POST",
     headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
   if (!res.ok && res.status === 400) {
     delete payload.response_format;
-    res = await fetch("https://api.mistral.ai/v1/chat/completions", {
+    res = await fetch(`${MISTRAL_API_BASE}/chat/completions`, {
       method: "POST",
       headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
   }
-  if (!res.ok) throw new Error("Réparation JSON impossible");
+  if (!res.ok) throw new Error(mistralErrorMessage(await res.text(), res.status));
   const data = await res.json();
   return parseAgentsJson(data.choices?.[0]?.message?.content || "");
 }
@@ -4097,20 +4189,20 @@ Schéma exact:
 }`;
 
   const payload = {
-    model: "mistral-small-2506",
+    model: DEFAULT_MODEL_ID,
     messages: [{ role: "user", content: prompt }],
     temperature: 0.55,
     max_tokens: 6000,
     response_format: { type: "json_object" }
   };
-  let res = await fetch("https://api.mistral.ai/v1/chat/completions", {
+  let res = await fetch(`${MISTRAL_API_BASE}/chat/completions`, {
     method: "POST",
     headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
   if (!res.ok && res.status === 400) {
     delete payload.response_format;
-    res = await fetch("https://api.mistral.ai/v1/chat/completions", {
+    res = await fetch(`${MISTRAL_API_BASE}/chat/completions`, {
       method: "POST",
       headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify(payload)
@@ -4138,14 +4230,26 @@ function initWizardEvents() {
   initWizardGoalPresets();
 
   // Step 1 → Step 2
-  document.getElementById('wizard-step1-next').onclick = () => {
+  document.getElementById('wizard-step1-next').onclick = async () => {
     const key = document.getElementById('wizard-api-key').value.trim();
     if (!isValidApiKey(key)) { toast("Clé invalide — min. 20 caractères", "error"); return; }
+    const button = document.getElementById('wizard-step1-next');
+    button.disabled = true;
+    button.innerHTML = '<span class="spin-ring"></span> VÉRIFICATION…';
+    const valid = await refreshAvailableModels(key);
+    if (!valid) {
+      button.disabled = false;
+      button.innerHTML = 'CONTINUER →';
+      toast("Clé Mistral refusée ou API indisponible — vérifiez la clé", "error");
+      return;
+    }
     setCookie("mistral_api_key", key);
     state.apiKey = key;
     document.getElementById('api-status').innerHTML = '<span class="status-dot"></span>ONLINE';
     document.getElementById('api-status').className = "status-pill active";
     setWizardStep(2);
+    button.disabled = false;
+    button.innerHTML = 'CONTINUER →';
   };
 
   // Step 2 back
@@ -4394,6 +4498,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       agentModelPref.appendChild(opt2);
     }
   });
+  MODELS.splice(0, MODELS.length, ...CURRENT_MODEL_CATALOG);
+  renderModelOptions();
   // Show/hide file upload btn based on model capability
   const updateFileBtn = () => {
     const m = MODELS.find(x => x.id === state.model);
@@ -4401,7 +4507,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (fileBtn) {
       const canUpload = m?.vision || m?.audio;
       fileBtn.style.opacity = canUpload ? '1' : '0.35';
-      fileBtn.title = canUpload ? `Joindre un fichier (${m.vision?'image':'audio'} supporté)` : 'Upload disponible avec Pixtral (images) ou Voxtral (audio)';
+      fileBtn.title = canUpload ? `Joindre un fichier (${m.vision?'image':'audio'} supporté)` : 'Upload disponible avec un modèle Vision ou Voxtral';
     }
   };
   updateFileBtn();
@@ -4421,6 +4527,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     $("#api-status").innerHTML = '<span class="status-dot"></span>ONLINE';
     $("#api-status").className = "status-pill active";
     $("#open-api-modal").textContent = "⬡ CLÉ API";
+    await refreshAvailableModels(cookieKey);
   }
 
   // Init new features
@@ -4718,10 +4825,15 @@ function bindEvents() {
   if ($("#close-api-modal-2")) $("#close-api-modal-2").onclick = closeApiModal;
   $("#api-modal").onclick = e => { if (e.target === $("#api-modal")) closeApiModal(); };
 
-  $("#save-api-key").onclick = () => {
+  $("#save-api-key").onclick = async () => {
     const k = $("#api-key-input").value.trim();
     if (!isValidApiKey(k)) {
       toast("Clé invalide — min. 20 caractères alphanumériques", "error");
+      return;
+    }
+    const valid = await refreshAvailableModels(k);
+    if (!valid) {
+      toast("Clé Mistral refusée ou API indisponible — vérifiez la clé", "error");
       return;
     }
     setCookie("mistral_api_key", k);
