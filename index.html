@@ -2710,18 +2710,27 @@ const MODELS = [
 // Les modèles Labs sont gratuits, mais expérimentaux.
 const MISTRAL_API_BASE = "https://api.mistral.ai/v1";
 const MISTRAL_API_BASES = [MISTRAL_API_BASE, "https://api.eu.mistral.ai/v1"];
+let mistralRequestQueue = Promise.resolve();
+let lastMistralRequestAt = 0;
 
 async function mistralFetch(path, options = {}) {
-  let lastError;
-  for (const base of MISTRAL_API_BASES) {
-    try {
-      return await fetch(`${base}${path}`, options);
-    } catch (error) {
-      lastError = error;
-      console.warn(`Connexion Mistral indisponible (${base}), essai suivant…`, error);
+  const request = mistralRequestQueue.then(async () => {
+    const waitMs = Math.max(0, 1200 - (Date.now() - lastMistralRequestAt));
+    if (waitMs) await new Promise(resolve => setTimeout(resolve, waitMs));
+    lastMistralRequestAt = Date.now();
+    let lastError;
+    for (const base of MISTRAL_API_BASES) {
+      try {
+        return await fetch(`${base}${path}`, options);
+      } catch (error) {
+        lastError = error;
+        console.warn(`Connexion Mistral indisponible (${base}), essai suivant…`, error);
+      }
     }
-  }
-  throw lastError || new TypeError("NetworkError when attempting to fetch resource.");
+    throw lastError || new TypeError("NetworkError when attempting to fetch resource.");
+  });
+  mistralRequestQueue = request.catch(() => {});
+  return request;
 }
 const DEFAULT_MODEL_ID = "mistral-small-latest";
 const MODEL_ALIASES = {
@@ -4279,9 +4288,6 @@ function initWizardEvents() {
     document.getElementById('api-status').innerHTML = '<span class="status-dot"></span>ONLINE';
     document.getElementById('api-status').className = "status-pill active";
     setWizardStep(2);
-    // La découverte des modèles est facultative : certains navigateurs ou
-    // réseaux bloquent GET /models alors que les appels de chat fonctionnent.
-    refreshAvailableModels(key).catch(() => {});
     button.disabled = false;
     button.innerHTML = 'CONTINUER →';
   };
@@ -4561,7 +4567,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     $("#api-status").innerHTML = '<span class="status-dot"></span>ONLINE';
     $("#api-status").className = "status-pill active";
     $("#open-api-modal").textContent = "⬡ CLÉ API";
-    await refreshAvailableModels(cookieKey);
   }
 
   // Init new features
@@ -4873,7 +4878,6 @@ function bindEvents() {
     if (error) error.classList.remove("active");
     setCookie("mistral_api_key", k);
     state.apiKey = k;
-    refreshAvailableModels(k).catch(() => {});
     $("#api-status").innerHTML = '<span class="status-dot"></span>ONLINE';
     $("#api-status").className = "status-pill active";
     if ($("#api-status-mob")) { $("#api-status-mob").innerHTML = '<span class="status-dot"></span>ONLINE'; $("#api-status-mob").className = "status-pill active"; }
