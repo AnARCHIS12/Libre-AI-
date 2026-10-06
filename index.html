@@ -4235,19 +4235,15 @@ function initWizardEvents() {
     if (!isValidApiKey(key)) { toast("Clé invalide — min. 20 caractères", "error"); return; }
     const button = document.getElementById('wizard-step1-next');
     button.disabled = true;
-    button.innerHTML = '<span class="spin-ring"></span> VÉRIFICATION…';
-    const valid = await refreshAvailableModels(key);
-    if (!valid) {
-      button.disabled = false;
-      button.innerHTML = 'CONTINUER →';
-      toast("Clé Mistral refusée ou API indisponible — vérifiez la clé", "error");
-      return;
-    }
+    button.innerHTML = '<span class="spin-ring"></span> ACTIVATION…';
     setCookie("mistral_api_key", key);
     state.apiKey = key;
     document.getElementById('api-status').innerHTML = '<span class="status-dot"></span>ONLINE';
     document.getElementById('api-status').className = "status-pill active";
     setWizardStep(2);
+    // La découverte des modèles est facultative : certains navigateurs ou
+    // réseaux bloquent GET /models alors que les appels de chat fonctionnent.
+    refreshAvailableModels(key).catch(() => {});
     button.disabled = false;
     button.innerHTML = 'CONTINUER →';
   };
@@ -4825,19 +4821,15 @@ function bindEvents() {
   if ($("#close-api-modal-2")) $("#close-api-modal-2").onclick = closeApiModal;
   $("#api-modal").onclick = e => { if (e.target === $("#api-modal")) closeApiModal(); };
 
-  $("#save-api-key").onclick = async () => {
+  $("#save-api-key").onclick = () => {
     const k = $("#api-key-input").value.trim();
     if (!isValidApiKey(k)) {
       toast("Clé invalide — min. 20 caractères alphanumériques", "error");
       return;
     }
-    const valid = await refreshAvailableModels(k);
-    if (!valid) {
-      toast("Clé Mistral refusée ou API indisponible — vérifiez la clé", "error");
-      return;
-    }
     setCookie("mistral_api_key", k);
     state.apiKey = k;
+    refreshAvailableModels(k).catch(() => {});
     $("#api-status").innerHTML = '<span class="status-dot"></span>ONLINE';
     $("#api-status").className = "status-pill active";
     if ($("#api-status-mob")) { $("#api-status-mob").innerHTML = '<span class="status-dot"></span>ONLINE'; $("#api-status-mob").className = "status-pill active"; }
