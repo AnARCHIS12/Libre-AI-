@@ -2497,7 +2497,7 @@ body::before {
         <div class="wizard-dot" id="wdot-3b"></div>
       </div>
       <div class="wizard-title">Définissez votre IA</div>
-      <div class="wizard-subtitle">Donnez un nom, choisissez un profil si besoin, puis Libre AI créera vos 20 agents spécialisés en une seule génération.</div>
+      <div class="wizard-subtitle">Donnez un nom, choisissez un profil si besoin, puis Libre AI créera 6 agents spécialisés en une seule génération légère.</div>
       <div class="field-group">
         <label class="field-label"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> Nom de votre IA <span style="color:var(--danger)">*</span></label>
         <input type="text" class="field-input" id="wizard-ai-name" placeholder="Ex : Atlas, Sentinel, Nexus, MyAssistant…">
@@ -2539,7 +2539,7 @@ body::before {
       </div>
       <div class="btn-row" style="border-top:none;padding-top:0">
         <button class="btn-ghost" id="wizard-step2-back">← Retour</button>
-        <button class="btn-primary" id="wizard-step2-next">CRÉER 20 AGENTS IA →</button>
+        <button class="btn-primary" id="wizard-step2-next">CRÉER 6 AGENTS IA →</button>
       </div>
     </div>
 
@@ -2551,10 +2551,10 @@ body::before {
         <div class="wizard-dot active"></div>
       </div>
       <div class="wizard-title" id="wizard-step3-title">Génération des Agents IA</div>
-      <div class="wizard-subtitle" id="wizard-step3-sub">Mistral crée vos 20 agents spécialisés. Cette étape dépend de votre connexion et de votre quota API.</div>
+      <div class="wizard-subtitle" id="wizard-step3-sub">Mistral crée 6 agents spécialisés. Cette étape dépend de votre connexion et de votre quota API.</div>
       <div class="wizard-generating" id="wizard-gen-loader">
         <div class="wizard-gen-icon"><i class="fa-solid fa-gear" aria-hidden="true"></i></div>
-        <div class="wizard-gen-status">CRÉATION DES 20 AGENTS…</div>
+        <div class="wizard-gen-status">CRÉATION DES 6 AGENTS…</div>
         <div class="wizard-gen-detail" id="wizard-gen-detail">Connexion à Mistral AI…</div>
         <div class="wizard-gen-note">Gardez cette fenêtre ouverte. Libre AI demande un JSON compact pour accélérer la réponse, puis prépare les agents automatiquement.</div>
       </div>
@@ -2710,6 +2710,7 @@ const MODELS = [
 // Les modèles Labs sont gratuits, mais expérimentaux.
 const MISTRAL_API_BASE = "https://api.mistral.ai/v1";
 const MISTRAL_API_BASES = [MISTRAL_API_BASE, "https://api.eu.mistral.ai/v1"];
+const INITIAL_AGENT_COUNT = 6;
 let mistralRequestQueue = Promise.resolve();
 let lastMistralRequestAt = 0;
 
@@ -4073,7 +4074,7 @@ function cleanJsonPayload(text) {
 function normalizeGeneratedAgents(parsed) {
   const source = Array.isArray(parsed) ? parsed : parsed?.agents;
   if (!Array.isArray(source) || !source.length) throw new Error("Réponse agents vide");
-  return source.slice(0, 20).map((ag, i) => ({
+  return source.slice(0, INITIAL_AGENT_COUNT).map((ag, i) => ({
     name: String(ag?.name || `Agent ${i + 1}`).slice(0, 48),
     desc: String(ag?.desc || ag?.description || "Agent spécialisé Libre AI").slice(0, 140),
     instructions: String(ag?.instructions || ag?.prompt || "Aide l'utilisateur avec précision, clarté et prudence.").slice(0, 2400),
@@ -4112,7 +4113,7 @@ function fallbackAgents(aiName, aiGoal) {
     ["Communication", "Prépare messages, présentations et réponses professionnelles."],
     ["Synthèse", "Résume les longues discussions et extrait les décisions."]
   ];
-  return base.map(([role, desc], i) => ({
+  return base.slice(0, INITIAL_AGENT_COUNT).map(([role, desc], i) => ({
     name: `${String(aiName || 'Libre').replace(/\s+/g, '').slice(0, 12)}${role}`,
     desc,
     instructions: `Tu es l'agent ${role} de Libre AI. Objectif utilisateur: ${goal}. Réponds en français par défaut, sois précis, utile, structuré, et signale clairement les incertitudes. Adapte tes conseils au contexte fourni et propose des étapes concrètes.`,
@@ -4188,8 +4189,7 @@ ${String(brokenJson || '').slice(0, 24000)}`;
   if (!res.ok) {
     const errorText = await res.text();
     if (res.status === 429) {
-      toast("Limite Mistral atteinte : 20 agents locaux vont être créés", "info");
-      return fallbackAgents(aiName, aiGoal);
+      throw new Error(mistralErrorMessage(errorText, res.status));
     }
     throw new Error(mistralErrorMessage(errorText, res.status));
   }
@@ -4203,7 +4203,7 @@ async function generateAgentsWithMistral(apiKey, aiName, aiGoal) {
 L'utilisateur veut créer une IA personnelle nommée "${aiName}" avec l'objectif suivant :
 "${aiGoal}"
 
-Génère EXACTEMENT 20 agents spécialisés parfaitement adaptés à ce contexte.
+Génère EXACTEMENT ${INITIAL_AGENT_COUNT} agents spécialisés parfaitement adaptés à ce contexte.
 Chaque agent doit avoir une spécialité unique et complémentaire des autres.
 
 Contraintes impératives:
@@ -4211,7 +4211,7 @@ Contraintes impératives:
 - Utilise seulement des chaînes JSON simples.
 - Échappe les guillemets internes.
 - Évite les retours ligne dans les valeurs.
-- Les instructions doivent rester entre 350 et 650 caractères par agent.
+- Les instructions doivent rester entre 160 et 300 caractères par agent.
 - Va droit au but: phrases courtes, règles concrètes, pas d'introduction.
 
 Schéma exact:
@@ -4232,8 +4232,7 @@ Schéma exact:
     model: DEFAULT_MODEL_ID,
     messages: [{ role: "user", content: prompt }],
     temperature: 0.55,
-    max_tokens: 6000,
-    response_format: { type: "json_object" }
+    max_tokens: 2200
   };
   let res;
   try {
@@ -4242,21 +4241,20 @@ Schéma exact:
       headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
-    if (!res.ok && res.status === 400) {
-      delete payload.response_format;
-      res = await mistralFetch("/chat/completions", {
-        method: "POST",
-        headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-    }
   } catch(networkError) {
     console.warn("Connexion Mistral indisponible, agents locaux de secours:", networkError);
-    toast("Mistral est momentanément inaccessible : 20 agents locaux vont être créés", "info");
+    toast(`Mistral est momentanément inaccessible : ${INITIAL_AGENT_COUNT} agents locaux vont être créés`, "info");
     return fallbackAgents(aiName, aiGoal);
   }
 
-  if (!res.ok) throw new Error(mistralErrorMessage(await res.text(), res.status));
+  if (!res.ok) {
+    const errorText = await res.text();
+    if (res.status === 429) {
+      toast(`Limite Mistral atteinte : ${INITIAL_AGENT_COUNT} agents locaux vont être créés`, "info");
+      return fallbackAgents(aiName, aiGoal);
+    }
+    throw new Error(mistralErrorMessage(errorText, res.status));
+  }
   const data = await res.json();
   const text = data.choices?.[0]?.message?.content || "";
   try {
@@ -4316,7 +4314,7 @@ function initWizardEvents() {
       await runAgentGeneration(name, goal);
     } finally {
       btn.disabled = false;
-      btn.innerHTML = 'CRÉER 20 AGENTS IA →';
+      btn.innerHTML = 'CRÉER 6 AGENTS IA →';
     }
   };
 
