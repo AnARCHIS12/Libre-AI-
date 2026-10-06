@@ -853,6 +853,14 @@ body::before {
   margin-top: 5px;
   letter-spacing: 0.5px;
 }
+.field-error {
+  display: none;
+  color: var(--danger);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  margin-top: 7px;
+}
+.field-error.active { display: block; }
 
 .color-config-grid {
   display: grid;
@@ -2218,6 +2226,7 @@ body::before {
         <label class="field-label"><i class="fa-solid fa-key" aria-hidden="true"></i> Clé API Mistral</label>
         <input type="password" class="field-input" id="api-key-input" placeholder="Collez votre clé ici…">
         <div class="field-hint">Format : min. 20 caractères — ex. <code style="font-family:var(--font-mono);color:var(--text-code);font-size:11px">sk-xxxxxxxxxxxxxxxxxxxxxxxx</code></div>
+        <div class="field-error" id="api-key-error" role="alert"></div>
       </div>
       <div class="btn-row" style="margin-top:0;padding-top:0;border-top:none;margin-bottom:20px">
         <button class="btn-ghost" id="close-api-modal-2">Annuler</button>
@@ -3109,8 +3118,8 @@ const deleteCookie = n => {
 
 const isValidApiKey = k => {
   const c = k.trim();
-  if (c.length < 20) return false;
-  return /^[A-Za-z0-9\-_]{20,}$/.test(c);
+  // Mistral keys are opaque tokens; only reject empty/clearly truncated input.
+  return c.length >= 20 && !/\s/.test(c);
 };
 
 // ════════════════════════════════════════
@@ -4823,10 +4832,16 @@ function bindEvents() {
 
   $("#save-api-key").onclick = () => {
     const k = $("#api-key-input").value.trim();
+    const error = $("#api-key-error");
     if (!isValidApiKey(k)) {
-      toast("Clé invalide — min. 20 caractères alphanumériques", "error");
+      if (error) {
+        error.textContent = "La clé doit contenir au moins 20 caractères, sans espace. Collez la clé complète générée par Mistral.";
+        error.classList.add("active");
+      }
+      toast("Clé API incomplète — vérifiez la clé collée", "error");
       return;
     }
+    if (error) error.classList.remove("active");
     setCookie("mistral_api_key", k);
     state.apiKey = k;
     refreshAvailableModels(k).catch(() => {});
@@ -4838,6 +4853,10 @@ function bindEvents() {
     // If no AI config, show wizard step 2
     if (!state.aiConfig) setTimeout(() => showWizard(2), 500);
   };
+  $("#api-key-input").addEventListener("input", () => {
+    const error = $("#api-key-error");
+    if (error) error.classList.remove("active");
+  });
 
   if ($("#delete-api-key")) {
     $("#delete-api-key").onclick = () => {
