@@ -2829,6 +2829,7 @@ async function refreshAvailableModels(apiKey) {
 }
 
 function mistralErrorMessage(raw, status) {
+  if (status === 429) return "Limite Free Tier Mistral atteinte — attendez quelques secondes puis réessayez";
   try {
     const data = JSON.parse(raw);
     return data.message || data.error?.message || `HTTP ${status}`;
@@ -4175,7 +4176,14 @@ ${String(brokenJson || '').slice(0, 24000)}`;
       body: JSON.stringify(payload)
     });
   }
-  if (!res.ok) throw new Error(mistralErrorMessage(await res.text(), res.status));
+  if (!res.ok) {
+    const errorText = await res.text();
+    if (res.status === 429) {
+      toast("Limite Mistral atteinte : 20 agents locaux vont être créés", "info");
+      return fallbackAgents(aiName, aiGoal);
+    }
+    throw new Error(mistralErrorMessage(errorText, res.status));
+  }
   const data = await res.json();
   return parseAgentsJson(data.choices?.[0]?.message?.content || "");
 }
