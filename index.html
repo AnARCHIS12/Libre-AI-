@@ -2709,6 +2709,20 @@ const MODELS = [
 // Les alias -latest évitent de casser l'application à chaque retrait de version.
 // Les modèles Labs sont gratuits, mais expérimentaux.
 const MISTRAL_API_BASE = "https://api.mistral.ai/v1";
+const MISTRAL_API_BASES = [MISTRAL_API_BASE, "https://api.eu.mistral.ai/v1"];
+
+async function mistralFetch(path, options = {}) {
+  let lastError;
+  for (const base of MISTRAL_API_BASES) {
+    try {
+      return await fetch(`${base}${path}`, options);
+    } catch (error) {
+      lastError = error;
+      console.warn(`Connexion Mistral indisponible (${base}), essai suivant…`, error);
+    }
+  }
+  throw lastError || new TypeError("NetworkError when attempting to fetch resource.");
+}
 const DEFAULT_MODEL_ID = "mistral-small-latest";
 const MODEL_ALIASES = {
   "mistral-small-2506": DEFAULT_MODEL_ID,
@@ -2792,7 +2806,7 @@ function renderModelOptions() {
 async function refreshAvailableModels(apiKey) {
   if (!apiKey) return false;
   try {
-    const res = await fetch(`${MISTRAL_API_BASE}/models`, { headers: { Authorization: `Bearer ${apiKey}` } });
+    const res = await mistralFetch("/models", { headers: { Authorization: `Bearer ${apiKey}` } });
     const raw = await res.text();
     let data = {};
     try { data = raw ? JSON.parse(raw) : {}; } catch (e) {}
@@ -3508,7 +3522,7 @@ async function _sendMessageOriginal() {
     updateContextMeter();
     const agentTemp = state.agent?.temperature !== undefined ? state.agent.temperature : model.temp;
     const agentMaxTok = state.agent?.maxTokens || 4096;
-    const res = await fetch(`${MISTRAL_API_BASE}/chat/completions`, {
+    const res = await mistralFetch("/chat/completions", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${state.apiKey}`,
@@ -3835,7 +3849,7 @@ async function sendMessage() {
       const agentTemp = state.agent?.temperature ?? model.temp;
       const agentMaxTok = state.agent?.maxTokens || 4096;
       const activeModelId = normalizeModelId((state.agent?.modelPref && state.agent.modelPref !== '') ? state.agent.modelPref : state.model);
-      const res = await fetch(`${MISTRAL_API_BASE}/chat/completions`, {
+      const res = await mistralFetch("/chat/completions", {
         method: "POST",
         headers: { "Authorization": `Bearer ${state.apiKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({ model: activeModelId, messages: contextMessages, temperature: agentTemp, max_tokens: agentMaxTok })
@@ -4148,14 +4162,14 @@ ${String(brokenJson || '').slice(0, 24000)}`;
     max_tokens: 6000,
     response_format: { type: "json_object" }
   };
-  let res = await fetch(`${MISTRAL_API_BASE}/chat/completions`, {
+  let res = await mistralFetch("/chat/completions", {
     method: "POST",
     headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
   if (!res.ok && res.status === 400) {
     delete payload.response_format;
-    res = await fetch(`${MISTRAL_API_BASE}/chat/completions`, {
+    res = await mistralFetch("/chat/completions", {
       method: "POST",
       headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify(payload)
@@ -4206,14 +4220,14 @@ Schéma exact:
   };
   let res;
   try {
-    res = await fetch(`${MISTRAL_API_BASE}/chat/completions`, {
+    res = await mistralFetch("/chat/completions", {
       method: "POST",
       headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
     if (!res.ok && res.status === 400) {
       delete payload.response_format;
-      res = await fetch(`${MISTRAL_API_BASE}/chat/completions`, {
+      res = await mistralFetch("/chat/completions", {
         method: "POST",
         headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
         body: JSON.stringify(payload)
